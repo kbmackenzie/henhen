@@ -16,13 +16,14 @@ import Data.Aeson
     , object
     )
 import Data.Text (Text)
+import Data.HashSet (HashSet)
 import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
 
 data HenHenConfig = HenHenConfig
-    { chickenDeps  :: [Text]
+    { chickenDeps  :: HashSet Text
     , specialDeps  :: HashMap Text Text
     , aliases      :: Maybe Aliases     }
     deriving (Show)
