@@ -5,6 +5,9 @@ module HenHen.Config
 ( HenHenConfig(..)
 , Aliases(..)
 , configFieldOrder
+, getInstaller
+, getCompiler
+, getInterpreter
 ) where
 
 import Data.Aeson
@@ -23,14 +26,15 @@ import Data.Function (on)
 import Data.Maybe (fromMaybe)
 
 data HenHenConfig = HenHenConfig
-    { chickenDeps  :: HashSet Text
-    , specialDeps  :: HashMap Text Text
-    , aliases      :: Maybe Aliases     }
+    { configDeps    :: HashSet Text
+    , specialDeps   :: HashMap Text Text
+    , configAliases :: Maybe Aliases     }
     deriving (Show)
 
 data Aliases = Aliases
-    { interpreter :: Maybe Text 
-    , compiler    :: Maybe Text }
+    { installerAlias   :: Maybe Text
+    , compilerAlias    :: Maybe Text
+    , interpreterAlias :: Maybe Text }
     deriving (Show)
 
 ------------------------------------
@@ -38,13 +42,15 @@ data Aliases = Aliases
 ------------------------------------
 instance FromJSON Aliases where
     parseJSON = withObject "Aliases" $ \obj -> Aliases
-        <$> (obj .:? "interpreter")
+        <$> (obj .:? "installer"  )
         <*> (obj .:? "compiler"   )
+        <*> (obj .:? "interpreter")
 
 instance ToJSON Aliases where
-    toJSON alias = object
-        [ "interpreter" .= interpreter alias
-        , "compiler"    .= compiler alias    ]
+    toJSON aliases = object
+        [ "installer"   .= installerAlias aliases
+        , "compiler"    .= compilerAlias aliases
+        , "interpreter" .= interpreterAlias aliases ]
 
 instance FromJSON HenHenConfig where
     parseJSON = withObject "HenHenConfig" $ \obj -> HenHenConfig
@@ -57,12 +63,12 @@ instance FromJSON HenHenConfig where
 
 instance ToJSON HenHenConfig where
     toJSON config = object
-        [ "dependencies"         .= chickenDeps config
+        [ "dependencies"         .= configDeps config
         , "special-dependencies" .= specialDeps config
-        , "aliases"              .= aliases config     ]
+        , "aliases"              .= configAliases config     ]
 
 ------------------------------------
--- Utils:
+-- Pretty-printing:
 ------------------------------------
 configFieldOrderMap :: HashMap Text Int
 configFieldOrderMap = HashMap.fromList
@@ -72,3 +78,20 @@ configFieldOrderMap = HashMap.fromList
 
 configFieldOrder :: Text -> Text -> Ordering
 configFieldOrder = compare `on` (`HashMap.lookup` configFieldOrderMap)
+
+------------------------------------
+-- Utilities:
+------------------------------------
+getAlias :: a -> (Aliases -> Maybe a) -> HenHenConfig -> a
+getAlias def getter config = fromMaybe def $ do
+    aliases <- configAliases config
+    getter aliases
+
+getInstaller :: HenHenConfig -> Text
+getInstaller = getAlias "chicken-install" installerAlias
+
+getCompiler :: HenHenConfig -> Text
+getCompiler = getAlias "csc" compilerAlias
+
+getInterpreter :: HenHenConfig -> Text
+getInterpreter = getAlias "csi" interpreterAlias
