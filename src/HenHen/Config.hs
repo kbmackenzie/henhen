@@ -26,7 +26,8 @@ import Data.Function (on)
 import Data.Maybe (fromMaybe)
 
 data HenHenConfig = HenHenConfig
-    { configDeps    :: HashSet Text
+    { configName    :: Maybe Text
+    , configDeps    :: HashSet Text
     , specialDeps   :: HashMap Text Text
     , configAliases :: Maybe Aliases     }
     deriving (Show)
@@ -54,7 +55,8 @@ instance ToJSON Aliases where
 
 instance FromJSON HenHenConfig where
     parseJSON = withObject "HenHenConfig" $ \obj -> HenHenConfig
-        <$> optional mempty (obj .:? "dependencies")
+        <$> (obj .:? "name")
+        <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "special-dependencies")
         <*> (obj .:? "aliases")
         where
