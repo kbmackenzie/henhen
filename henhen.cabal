@@ -24,7 +24,10 @@ source-repository head
 
 library
   exposed-modules:
-      HenHen.Config
+      HenHen.Config.Type
+      HenHen.Environment.Run
+      HenHen.Environment.Type
+      HenHen.Utils.String
   other-modules:
       Paths_henhen
   autogen-modules:
@@ -36,11 +39,13 @@ library
       aeson ==2.1.*
     , ansi-terminal ==0.11.*
     , base >=4.7 && <5
+    , bytestring >=0.11 && <0.13
     , conduit ==1.3.*
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
     , mtl >=2.2 && <2.4
+    , process ==1.6.*
     , text ==2.0.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
@@ -60,12 +65,14 @@ executable henhen-exe
       aeson ==2.1.*
     , ansi-terminal ==0.11.*
     , base >=4.7 && <5
+    , bytestring >=0.11 && <0.13
     , conduit ==1.3.*
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
     , henhen
     , mtl >=2.2 && <2.4
+    , process ==1.6.*
     , text ==2.0.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
@@ -86,12 +93,14 @@ test-suite henhen-test
       aeson ==2.1.*
     , ansi-terminal ==0.11.*
     , base >=4.7 && <5
+    , bytestring >=0.11 && <0.13
     , conduit ==1.3.*
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
     , henhen
     , mtl >=2.2 && <2.4
+    , process ==1.6.*
     , text ==2.0.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
