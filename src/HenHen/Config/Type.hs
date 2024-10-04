@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StrictData #-}
 
-module HenHen.Config
+module HenHen.Config.Type
 ( HenHenConfig(..)
 , Aliases(..)
 , configFieldOrder
