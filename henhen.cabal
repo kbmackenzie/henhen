@@ -6,8 +6,8 @@ cabal-version: 2.2
 
 name:           henhen
 version:        1.0.0
-homepage:       https://github.com/kbmackenzie/mewlix#readme
-bug-reports:    https://github.com/kbmackenzie/mewlix/issues
+homepage:       https://github.com/kbmackenzie/henhen#readme
+bug-reports:    https://github.com/kbmackenzie/henhen/issues
 author:         kbmackenzie <kelly.a.betty@gmail.com>
 maintainer:     kbmackenzie <kelly.a.betty@gmail.com>
 copyright:      2024 kbmackenzie
@@ -20,7 +20,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/kbmackenzie/mewlix
+  location: https://github.com/kbmackenzie/henhen
 
 library
   exposed-modules:
