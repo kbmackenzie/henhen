@@ -12,7 +12,6 @@ import System.FilePath ((</>))
 import System.Directory (getCurrentDirectory)
 import System.Process (readProcess)
 import qualified Data.Text as Text
-import qualified Data.ByteString.Lazy.Char8 as Char8
 
 data Environment = Environment
     { environmentRoot    :: FilePath
@@ -32,8 +31,7 @@ getEnvironment config = liftIO $ do
     let localEnv = pwd </> ".chicken"
 
     let installer = getInstaller config
-    systemRepo <- fmap Char8.unpack $ -- Assumes ASCII.
-        readProcessStdout_ $ proc (Text.unpack installer) ["-repository"]
+    systemRepo <- readProcess (Text.unpack installer) ["-repository"] mempty
 
     return Environment
         { environmentRoot    = localEnv
