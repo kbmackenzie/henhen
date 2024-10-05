@@ -6,15 +6,14 @@ module HenHen.Environment.Type
 ) where
 
 import HenHen.Config.Type (HenHenConfig(..), getInstaller)
+import Data.List (unionBy)
+import Data.Function (on)
+import Data.Maybe (fromMaybe)
 import Control.Monad.IO.Class (MonadIO(..))
 import System.FilePath ((</>))
 import System.Directory (getCurrentDirectory)
 import System.Process (readProcess)
 import System.Environment (getEnvironment)
-import Data.Maybe (fromMaybe)
-import Data.List (unionBy)
-import Data.Function (on)
-import qualified Data.Text as Text
 
 type Environment = [(String, String)]
 
@@ -35,7 +34,7 @@ getChickenEnvironment config = liftIO $ do
     let localEnv = pwd </> ".chicken"
 
     let installer = getInstaller config
-    systemRepo <- readProcess (Text.unpack installer) ["-repository"] mempty
+    systemRepo <- readProcess installer ["-repository"] mempty
 
     return ChickenEnvironment
         { environmentRoot    = localEnv

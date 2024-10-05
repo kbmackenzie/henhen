@@ -26,16 +26,16 @@ import Data.Function (on)
 import Data.Maybe (fromMaybe)
 
 data HenHenConfig = HenHenConfig
-    { configName    :: Maybe Text
-    , configDeps    :: HashSet Text
-    , specialDeps   :: HashMap Text Text
-    , configAliases :: Maybe Aliases     }
+    { configName    :: Maybe String
+    , configDeps    :: HashSet String
+    , specialDeps   :: HashMap String String
+    , configAliases :: Maybe Aliases         }
     deriving (Show)
 
 data Aliases = Aliases
-    { installerAlias   :: Maybe Text
-    , compilerAlias    :: Maybe Text
-    , interpreterAlias :: Maybe Text }
+    { installerAlias   :: Maybe String
+    , compilerAlias    :: Maybe String
+    , interpreterAlias :: Maybe String }
     deriving (Show)
 
 ------------------------------------
@@ -89,11 +89,11 @@ getAlias def getter config = fromMaybe def $ do
     aliases <- configAliases config
     getter aliases
 
-getInstaller :: HenHenConfig -> Text
+getInstaller :: HenHenConfig -> String
 getInstaller = getAlias "chicken-install" installerAlias
 
-getCompiler :: HenHenConfig -> Text
+getCompiler :: HenHenConfig -> String
 getCompiler = getAlias "csc" compilerAlias
 
-getInterpreter :: HenHenConfig -> Text
+getInterpreter :: HenHenConfig -> String
 getInterpreter = getAlias "csi" interpreterAlias
