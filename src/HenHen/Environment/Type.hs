@@ -2,6 +2,7 @@
 
 module HenHen.Environment.Type
 ( Environment
+, getLocalChicken
 , createEnvironment
 ) where
 
@@ -22,6 +23,9 @@ data ChickenEnvironment = ChickenEnvironment
     , environmentRepo    :: FilePath
     , repositoryVariable :: String   }
 
+getLocalChicken :: (MonadIO m) => m FilePath
+getLocalChicken = (</> ".chicken") <$> liftIO getCurrentDirectory
+
 getChickenVars :: ChickenEnvironment -> [(String, String)]
 getChickenVars env =
     [ ("CHICKEN_INSTALL_PREFIX"    , environmentRoot env   )
@@ -30,9 +34,7 @@ getChickenVars env =
 
 getChickenEnvironment :: (MonadIO m) => HenHenConfig -> m ChickenEnvironment
 getChickenEnvironment config = liftIO $ do
-    pwd <- getCurrentDirectory
-    let localEnv = pwd </> ".chicken"
-
+    localEnv <- getLocalChicken
     let installer = getInstaller config
     systemRepo <- readProcess installer ["-repository"] mempty
 
