@@ -6,7 +6,7 @@ module HenHen.Environment.Type
 , createEnvironment
 ) where
 
-import HenHen.Config.Type (HenHenConfig(..), getInstaller)
+import HenHen.Config (HenHenConfig(..), getInstaller)
 import HenHen.Packager (Packager, liftEither)
 import Data.List (unionBy)
 import Data.Function (on)
