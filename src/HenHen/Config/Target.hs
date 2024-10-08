@@ -64,12 +64,12 @@ instance ToJSON MetaKey where
 parseMeta :: Object -> Parser Meta
 parseMeta obj = Meta
     <$> (obj .: "name")
-    <*> (obj .: "dependencies")
-    <*> (obj .: "extra-options")
+    <*> optional mempty (obj .:? "dependencies")
+    <*> optional mempty (obj .:? "extra-options")
 
 parseModule :: Object -> Parser ModuleOptions
 parseModule obj = ModuleOptions
-    <$> (obj .: "source")
+    <$> (obj .:? "source")
     <*> optional mempty (obj .:? "includes")
 
 parseEgg :: Object -> Parser EggOptions
@@ -77,8 +77,8 @@ parseEgg obj = EggOptions <$> (obj .: "directory")
 
 parseExecutable :: Object -> Parser ExecutableOptions
 parseExecutable obj = ExecutableOptions
-    <$> (obj .: "output")
-    <*> (obj .: "source")
+    <$> (obj .:? "output")
+    <*> (obj .:? "source")
     <*> optional True (obj .:? "static")
     <*> optional mempty (obj .:? "includes")
 
