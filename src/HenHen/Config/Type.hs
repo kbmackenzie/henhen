@@ -33,6 +33,7 @@ data HenHenConfig = HenHenConfig
     { configName    :: Maybe String
     , configDeps    :: HashSet String
     , configFetch   :: HashMap String String
+    , configSources :: Maybe FilePath
     , configAliases :: Maybe Aliases
     , configTargets :: [Target]              }
 
@@ -67,24 +68,30 @@ instance FromJSON HenHenConfig where
         <$> (obj .:? "name")
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "fetch")
+        <*> (obj .:? "source-folder")
         <*> (obj .:? "aliases")
         <*> optional mempty (obj .:? "targets")
 
 instance ToJSON HenHenConfig where
     toJSON config = object
-        [ "dependencies" .= configDeps config
-        , "fetch"        .= configFetch config
-        , "aliases"      .= configAliases config 
-        , "targets"      .= configTargets config ]
+        [ "name"          .= configName config
+        , "dependencies"  .= configDeps config
+        , "fetch"         .= configFetch config
+        , "source-folder" .= configSources config
+        , "aliases"       .= configAliases config 
+        , "targets"       .= configTargets config ]
 
 ------------------------------------
 -- Pretty-printing:
 ------------------------------------
 configFieldOrderMap :: HashMap Text Int
 configFieldOrderMap = HashMap.fromList
-    [ ("dependencies"        , 1)
-    , ("special-dependencies", 2)
-    , ("aliases"             , 3) ]
+    [ ("name"          , 1)
+    , ("dependencies"  , 2)
+    , ("fetch"         , 3)
+    , ("source-folder" , 4)
+    , ("aliases"       , 5)
+    , ("targets"       , 6) ]
 
 configFieldOrder :: Text -> Text -> Ordering
 configFieldOrder = compare `on` (`HashMap.lookup` configFieldOrderMap)
