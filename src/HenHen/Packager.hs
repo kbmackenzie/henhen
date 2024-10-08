@@ -5,10 +5,11 @@ module HenHen.Packager
 , package
 , throwError
 , catchError
+, liftEither
 , liftIO
 ) where
 
-import Control.Monad.Except (MonadError, ExceptT, runExceptT, throwError, catchError)
+import Control.Monad.Except (MonadError, ExceptT, runExceptT, throwError, catchError, liftEither)
 import Control.Monad.IO.Class (MonadIO(..))
 
 newtype Packager a = Packager { runPackager :: ExceptT String IO a }
