@@ -13,14 +13,15 @@ module HenHen.Config.Target
 import Data.Aeson
     ( ToJSON(..)
     , FromJSON(..)
-    , Value
     , Object
     , (.:)
     , (.:?)
     , withObject
     , withText
+    , object
+    , (.=)
     )
-import Data.Aeson.Types (Parser)
+import Data.Aeson.Types (Parser, Pair)
 import HenHen.Utils.Maybe (optional)
 import qualified Data.Text as Text
 import Data.Char (toLower)
@@ -44,7 +45,7 @@ newtype EggOptions = EggOptions
     { eggDirectory   :: Maybe FilePath }
 
 data ExecutableOptions = ExecutableOptions
-    { executableName     :: String
+    { executableOutput   :: String
     , executableSource   :: FilePath
     , executableStatic   :: Bool
     , executableIncludes :: [FilePath] }
@@ -74,7 +75,7 @@ parseEgg obj = EggOptions <$> (obj .: "directory")
 
 parseExecutable :: Object -> Parser ExecutableOptions
 parseExecutable obj = ExecutableOptions
-    <$> (obj .: "name")
+    <$> (obj .: "output")
     <*> (obj .: "source")
     <*> optional True (obj .:? "static")
     <*> optional mempty (obj .:? "includes")
@@ -88,3 +89,23 @@ instance FromJSON Target where
             "egg"        -> Egg        meta <$> parseEgg obj
             "executable" -> Executable meta <$> parseExecutable obj
             _            -> fail $ "unrecognized target tag: " ++ show tag
+
+serializeMeta :: Meta -> [Pair]
+serializeMeta meta =
+    [ "name"         .= metaKey  meta
+    , "dependencies" .= metaDeps meta ]
+
+instance ToJSON Target where
+    toJSON (Module meta options) = object $ serializeMeta meta ++
+        [ "tag"       .= ("module" :: String)
+        , "source"    .= moduleSource options
+        , "includes"  .= moduleIncludes options ]
+    toJSON (Egg meta options) = object $ serializeMeta meta ++
+        [ "tag"       .= ("egg" :: String)
+        , "directory" .= eggDirectory options ]
+    toJSON (Executable meta options) = object $ serializeMeta meta ++
+        [ "tag"       .= ("exeuctable" :: String)
+        , "output"    .= executableOutput options
+        , "source"    .= executableSource options
+        , "static"    .= executableStatic options
+        , "includes"  .= executableIncludes options ]
