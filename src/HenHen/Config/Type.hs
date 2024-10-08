@@ -24,6 +24,7 @@ import Data.HashMap.Strict (HashMap)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
+import HenHen.Utils.Maybe (optional)
 
 data HenHenConfig = HenHenConfig
     { configName    :: Maybe String
@@ -59,9 +60,6 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "special-dependencies")
         <*> (obj .:? "aliases")
-        where
-            optional :: (Functor f) => a -> f (Maybe a) -> f a
-            optional = fmap . fromMaybe
 
 instance ToJSON HenHenConfig where
     toJSON config = object
