@@ -8,6 +8,8 @@ module HenHen.Config.Type
 , getInstaller
 , getCompiler
 , getInterpreter
+, getStatus
+, getUninstaller
 ) where
 
 import HenHen.Config.Target (Target)
@@ -103,3 +105,9 @@ getCompiler = getAlias "csc" compilerAlias
 
 getInterpreter :: HenHenConfig -> String
 getInterpreter = getAlias "csi" interpreterAlias
+
+getStatus :: HenHenConfig -> String
+getStatus = getAlias "chicken-status" statusAlias
+
+getUninstaller :: HenHenConfig -> String
+getUninstaller = getAlias "chicken-uninstall" uninstallerAlias
