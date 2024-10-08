@@ -37,7 +37,9 @@ data HenHenConfig = HenHenConfig
 data Aliases = Aliases
     { installerAlias   :: Maybe String
     , compilerAlias    :: Maybe String
-    , interpreterAlias :: Maybe String }
+    , interpreterAlias :: Maybe String
+    , statusAlias      :: Maybe String
+    , uninstallerAlias :: Maybe String }
 
 ------------------------------------
 -- JSON/YAML parsing:
@@ -47,12 +49,16 @@ instance FromJSON Aliases where
         <$> (obj .:? "installer"  )
         <*> (obj .:? "compiler"   )
         <*> (obj .:? "interpreter")
+        <*> (obj .:? "status"     )
+        <*> (obj .:? "uninstaller")
 
 instance ToJSON Aliases where
     toJSON aliases = object
         [ "installer"   .= installerAlias aliases
         , "compiler"    .= compilerAlias aliases
-        , "interpreter" .= interpreterAlias aliases ]
+        , "interpreter" .= interpreterAlias aliases
+        , "status"      .= statusAlias aliases
+        , "uninstaller" .= uninstallerAlias aliases ]
 
 instance FromJSON HenHenConfig where
     parseJSON = withObject "HenHenConfig" $ \obj -> HenHenConfig
