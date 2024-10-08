@@ -30,12 +30,12 @@ import Data.Maybe (fromMaybe)
 import HenHen.Utils.Maybe (optional)
 
 data HenHenConfig = HenHenConfig
-    { configName    :: Maybe String
-    , configDeps    :: HashSet String
-    , configFetch   :: HashMap String String
-    , configSources :: Maybe FilePath
-    , configAliases :: Maybe Aliases
-    , configTargets :: [Target]              }
+    { configName    :: Maybe String             -- Project name.
+    , configDeps    :: HashSet String           -- Project dependencies.
+    , configFetch   :: HashMap String String    -- From where to fetch custom dependencies.
+    , configSources :: Maybe FilePath           -- Source root.
+    , configAliases :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
+    , configTargets :: [Target]              }  -- Build targets.
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String
