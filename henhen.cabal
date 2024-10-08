@@ -27,6 +27,7 @@ library
       HenHen.Config.Target
       HenHen.Config.Type
       HenHen.Environment.Type
+      HenHen.Utils.Maybe
       HenHen.Utils.String
   other-modules:
       Paths_henhen
