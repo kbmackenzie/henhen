@@ -10,6 +10,7 @@ module HenHen.Config.Type
 , getInterpreter
 ) where
 
+import HenHen.Config.Target (Target)
 import Data.Aeson
     ( ToJSON(..)
     , FromJSON(..)
@@ -30,14 +31,13 @@ data HenHenConfig = HenHenConfig
     { configName    :: Maybe String
     , configDeps    :: HashSet String
     , specialDeps   :: HashMap String String
-    , configAliases :: Maybe Aliases         }
-    deriving (Show)
+    , configAliases :: Maybe Aliases
+    , configTargets :: [Target]              }
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String
     , compilerAlias    :: Maybe String
     , interpreterAlias :: Maybe String }
-    deriving (Show)
 
 ------------------------------------
 -- JSON/YAML parsing:
@@ -60,12 +60,14 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "special-dependencies")
         <*> (obj .:? "aliases")
+        <*> optional mempty (obj .:? "targets")
 
 instance ToJSON HenHenConfig where
     toJSON config = object
         [ "dependencies"         .= configDeps config
         , "special-dependencies" .= specialDeps config
-        , "aliases"              .= configAliases config     ]
+        , "aliases"              .= configAliases config 
+        , "targets"              .= configTargets config ]
 
 ------------------------------------
 -- Pretty-printing:
