@@ -27,8 +27,9 @@ import qualified Data.Text as Text
 import Data.Char (toLower)
 
 data Meta = Meta
-    { metaKey   :: MetaKey
-    , metaDeps  :: [MetaKey] }
+    { metaKey     :: MetaKey
+    , metaDeps    :: [MetaKey]
+    , metaOptions :: [String]  }
 
 newtype MetaKey = MetaKey { getKey :: String }
 
@@ -64,6 +65,7 @@ parseMeta :: Object -> Parser Meta
 parseMeta obj = Meta
     <$> (obj .: "name")
     <*> (obj .: "dependencies")
+    <*> (obj .: "extra-options")
 
 parseModule :: Object -> Parser ModuleOptions
 parseModule obj = ModuleOptions
@@ -92,8 +94,9 @@ instance FromJSON Target where
 
 serializeMeta :: Meta -> [Pair]
 serializeMeta meta =
-    [ "name"         .= metaKey  meta
-    , "dependencies" .= metaDeps meta ]
+    [ "name"          .= metaKey  meta
+    , "dependencies"  .= metaDeps meta
+    , "extra-options" .= metaOptions meta ]
 
 instance ToJSON Target where
     toJSON (Module meta options) = object $ serializeMeta meta ++
