@@ -2,24 +2,32 @@
 
 module HenHen.Config.Target
 ( Target(..)
-, TargetName(..)
-, TargetType(..)
+, Meta(..)
+, MetaKey(..)
+, ModuleOptions(..)
+, EggOptions(..)
+, ExecutableOptions(..)
 ) where
 
-data TargetType =
-      Library
-    | Executable
-    | TestSuite
-    deriving (Eq, Ord, Bounded, Enum, Show)
+data Meta = Meta
+    { metaKey   :: MetaKey
+    , metaDeps  :: [MetaKey] }
 
-newtype TargetName = TargetName
-    { getTargetName :: String }
-    deriving (Show)
+newtype MetaKey = Key { getKey :: MetaKey }
 
-data Target = Target
-    { targetName    :: TargetName
-    , targetType    :: TargetType
-    , targetSources :: [FilePath]
-    , targetDeps    :: [TargetName]
-    }
-    deriving (Show)
+data Target =
+      Module     Meta ModuleOptions
+    | Egg        Meta EggOptions
+    | Executable Meta ExecutableOptions
+
+data ModuleOptions = ModuleOptions
+    { moduleSource   :: FilePath
+    , moduleIncludes :: FilePath }
+
+newtype EggOptions = EggOptions
+    { eggDirectory   :: Maybe FilePath }
+
+data ExecutableOptions = ExecutableOptions
+    { executableName   :: String
+    , executableSource :: FilePath
+    , executableStatic :: Bool     }
