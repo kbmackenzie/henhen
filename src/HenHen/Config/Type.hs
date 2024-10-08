@@ -30,7 +30,7 @@ import HenHen.Utils.Maybe (optional)
 data HenHenConfig = HenHenConfig
     { configName    :: Maybe String
     , configDeps    :: HashSet String
-    , specialDeps   :: HashMap String String
+    , configFetch   :: HashMap String String
     , configAliases :: Maybe Aliases
     , configTargets :: [Target]              }
 
@@ -58,16 +58,16 @@ instance FromJSON HenHenConfig where
     parseJSON = withObject "HenHenConfig" $ \obj -> HenHenConfig
         <$> (obj .:? "name")
         <*> optional mempty (obj .:? "dependencies")
-        <*> optional mempty (obj .:? "special-dependencies")
+        <*> optional mempty (obj .:? "fetch")
         <*> (obj .:? "aliases")
         <*> optional mempty (obj .:? "targets")
 
 instance ToJSON HenHenConfig where
     toJSON config = object
-        [ "dependencies"         .= configDeps config
-        , "special-dependencies" .= specialDeps config
-        , "aliases"              .= configAliases config 
-        , "targets"              .= configTargets config ]
+        [ "dependencies" .= configDeps config
+        , "fetch"        .= configFetch config
+        , "aliases"      .= configAliases config 
+        , "targets"      .= configTargets config ]
 
 ------------------------------------
 -- Pretty-printing:
