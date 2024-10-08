@@ -24,8 +24,8 @@ source-repository head
 
 library
   exposed-modules:
+      HenHen.Config.Target
       HenHen.Config.Type
-      HenHen.Environment.Run
       HenHen.Environment.Type
       HenHen.Utils.String
   other-modules:
