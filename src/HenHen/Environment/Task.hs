@@ -17,8 +17,8 @@ data EnvironmentTask = EnvironmentTask
     , taskDirectory   :: Maybe FilePath
     , taskErrorReport :: Maybe (String -> String) }
 
-runEnvironmentTask :: EnvironmentTask -> Environment -> Packager ()
-runEnvironmentTask task env = do
+runEnvironmentTask :: Environment -> EnvironmentTask -> Packager ()
+runEnvironmentTask env task = do
     let setLocation = maybe id setWorkingDir (taskDirectory task)
     let setters = setEnv env . setLocation
     let process = setters $ proc (taskCommand task) (taskArguments task)
