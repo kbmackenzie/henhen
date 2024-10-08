@@ -38,17 +38,17 @@ data Target =
     | Executable Meta ExecutableOptions
 
 data ModuleOptions = ModuleOptions
-    { moduleSource   :: FilePath
-    , moduleIncludes :: [FilePath] }
+    { moduleSource   :: Maybe FilePath
+    , moduleIncludes :: [FilePath]     }
 
 newtype EggOptions = EggOptions
     { eggDirectory   :: Maybe FilePath }
 
 data ExecutableOptions = ExecutableOptions
-    { executableOutput   :: String
-    , executableSource   :: FilePath
+    { executableOutput   :: Maybe FilePath
+    , executableSource   :: Maybe FilePath
     , executableStatic   :: Bool
-    , executableIncludes :: [FilePath] }
+    , executableIncludes :: [FilePath]     }
 
 ------------------------------------
 -- JSON/YAML parsing:
