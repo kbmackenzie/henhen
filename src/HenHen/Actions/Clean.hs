@@ -27,7 +27,7 @@ hardClean patterns = do
         hasChicken <- doesDirectoryExist localChicken
         when hasChicken (removeDirectoryRecursive localChicken)
 
-clean :: [FilePattern] -> Bool -> Packager ()
-clean patterns hard = do
+clean :: Bool -> Packager ()
+clean hard = do
     let cleaner = if hard then hardClean else softClean
-    cleaner . nubOrd $ (patterns ++ cleanPatterns)
+    cleaner cleanPatterns
