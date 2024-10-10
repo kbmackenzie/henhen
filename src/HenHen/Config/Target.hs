@@ -9,6 +9,7 @@ module HenHen.Config.Target
 , SourceOptions(..)
 , EggOptions(..)
 , getTargetKey
+, getTargetMap
 ) where
 
 import Data.Aeson
@@ -27,6 +28,8 @@ import HenHen.Utils.Maybe (optional)
 import qualified Data.Text as Text
 import Data.Char (toLower, isAlphaNum)
 import Data.Hashable (Hashable)
+import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HashMap
 
 data Meta = Meta
     { metaKey     :: MetaKey
@@ -55,6 +58,10 @@ getTargetKey :: Target -> MetaKey
 getTargetKey (Module meta _) = metaKey meta
 getTargetKey (Egg meta _) = metaKey meta
 getTargetKey (Executable meta _) = metaKey meta
+
+getTargetMap :: [Target] -> HashMap MetaKey Target
+getTargetMap = HashMap.fromList . map toPair
+    where toPair target = (getTargetKey target, target)
 
 ------------------------------------
 -- JSON/YAML parsing:
