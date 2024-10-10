@@ -8,6 +8,7 @@ module HenHen.Config.Target
 , MetaKey(..)
 , SourceOptions(..)
 , EggOptions(..)
+, getTargetMeta
 , getTargetKey
 , getTargetMap
 ) where
@@ -54,10 +55,13 @@ newtype EggOptions = EggOptions
 ------------------------------------
 -- Utilities:
 ------------------------------------
+getTargetMeta :: Target -> Meta
+getTargetMeta (Module meta _) = meta
+getTargetMeta (Egg meta _) = meta
+getTargetMeta (Executable meta _) = meta
+
 getTargetKey :: Target -> MetaKey
-getTargetKey (Module meta _) = metaKey meta
-getTargetKey (Egg meta _) = metaKey meta
-getTargetKey (Executable meta _) = metaKey meta
+getTargetKey = metaKey . getTargetMeta
 
 getTargetMap :: [Target] -> HashMap MetaKey Target
 getTargetMap = HashMap.fromList . map toPair
