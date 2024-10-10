@@ -16,6 +16,7 @@ data EnvironmentTask = EnvironmentTask
     , taskArguments   :: [String]
     , taskDirectory   :: Maybe FilePath
     , taskErrorReport :: Maybe (String -> String)
+    , taskPrepare     :: Maybe (IO ())
     , nextTask        :: Maybe EnvironmentTask   }
 
 runEnvironmentTask :: Environment -> EnvironmentTask -> Packager ()
