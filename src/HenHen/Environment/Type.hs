@@ -8,12 +8,13 @@ module HenHen.Environment.Type
 
 import HenHen.Config (HenHenConfig(..), getInstaller)
 import HenHen.Packager (Packager, liftEither)
+import HenHen.Environment.Folders (localChicken)
 import Data.List (unionBy)
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
 import Control.Monad.IO.Class (MonadIO(..))
 import System.FilePath ((</>))
-import System.Directory (getCurrentDirectory)
+import System.Directory (canonicalizePath)
 import System.Process (readProcess)
 import System.Environment (getEnvironment)
 import Control.Exception (IOException, catch)
@@ -26,7 +27,7 @@ data ChickenEnvironment = ChickenEnvironment
     , repositoryVariable :: String   }
 
 getLocalChicken :: (MonadIO m) => m FilePath
-getLocalChicken = (</> ".chicken") <$> liftIO getCurrentDirectory
+getLocalChicken = liftIO (canonicalizePath localChicken)
 
 getSystemChicken :: (MonadIO m) => String -> m (Either String FilePath)
 getSystemChicken installer = liftIO $ do
