@@ -16,27 +16,26 @@ import HenHen.Config
     , getTargetMap
     )
 import HenHen.Environment
-    ( chickenBuild
+    ( Environment
     , EnvironmentTask(..)
     , runEnvironmentTask
-    , Environment
     )
-import System.FilePath ((</>), normalise, addExtension, replaceExtension, dropExtension)
-import System.Directory (createDirectoryIfMissing)
+import System.FilePath ((</>), normalise, addExtension)
 import Data.Maybe (fromMaybe)
 import HenHen.Packager (Packager, throwError)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (foldM, foldM_)
+import Data.List (singleton)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
-getIncludes :: Meta -> [String]
-getIncludes meta = do
-    let dependencies = metaDeps meta
-    let includes flag = map $ (flag ++) . (chickenBuild </>) . getKey
-    includes "-I " dependencies ++ includes "-C -I" dependencies
+getObjects :: Meta -> [String]
+getObjects = map ((`addExtension` "o") . getKey) . metaDeps
+
+getUses :: Meta -> [String]
+getUses = concatMap (("-uses" :) . singleton . getKey) . metaDeps
 
 buildSource :: Bool -> GenerateTask SourceOptions
 buildSource isModule config meta options = do
@@ -44,21 +43,23 @@ buildSource isModule config meta options = do
     let sourceDir = maybe id ((</>) . normalise) (configSources config)
     let source = sourceDir $ fromMaybe (addExtension name "scm") (sourcePath options)
 
-    let outputDir = chickenBuild </> name
-    let output = outputDir </> if isModule
-        then replaceExtension source "o"
-        else dropExtension source
+    let output = "." </> if isModule
+        then addExtension name "o"
+        else name
 
-    let specialArgs = if isModule
-        then ["-c", "-J", "-regenerate-import-libraries", "-M"]
-        else mempty
-
-    let arguments = concat
-            [ specialArgs
-            , [source, "-unit", name, "-o", output]
-            , getIncludes meta
+    let coreFlags = ["-static", "-setup-mode", "-O2"]
+    let arguments = if isModule
+        then concat
+            [ ["-c", "-J", "-regenerate-import-libraries", "-M"]
+            , ["-unit", name, "-o", output, source]
+            , coreFlags
             , metaOptions meta ]
-    let preparations = createDirectoryIfMissing True outputDir
+        else concat
+            [ ["-o", output, source]
+            , getObjects meta
+            , getUses meta
+            , coreFlags
+            , metaOptions meta ] 
 
     let compiler = getCompiler config
     EnvironmentTask
@@ -66,7 +67,7 @@ buildSource isModule config meta options = do
         , taskArguments   = arguments
         , taskDirectory   = Nothing
         , taskErrorReport = Just . buildFail $ "module " ++ show name
-        , taskPrepare     = Just preparations
+        , taskPrepare     = Nothing
         , nextTask        = Nothing }
 
 buildEgg :: GenerateTask EggOptions
