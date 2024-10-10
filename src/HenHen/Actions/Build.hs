@@ -13,6 +13,7 @@ import HenHen.Config
     , getInstaller
     , getTargetMeta
     , getTargetKey
+    , isModuleTarget
     )
 import HenHen.Environment
     ( Environment
@@ -51,7 +52,7 @@ buildSource isModule config meta options = do
         else name
 
     let filterModules :: [MetaKey] -> [MetaKey]
-        filterModules = filter (`HashMap.member` targetMap)
+        filterModules = filter $ maybe False isModuleTarget . (`HashMap.lookup` targetMap)
 
     let coreFlags = ["-static", "-setup-mode", "-O2"]
     let dependencies = filterModules (metaDeps meta)
