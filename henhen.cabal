@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       HenHen.Actions.Build
+      HenHen.Actions.Clean
       HenHen.Actions.Interpret
       HenHen.Actions.Run
       HenHen.Config
@@ -53,6 +54,7 @@ library
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
+    , filepattern ==0.1.*
     , hashable ==1.4.*
     , mtl >=2.2 && <2.4
     , process ==1.6.*
@@ -80,6 +82,7 @@ executable henhen-exe
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
+    , filepattern ==0.1.*
     , hashable ==1.4.*
     , henhen
     , mtl >=2.2 && <2.4
@@ -109,6 +112,7 @@ test-suite henhen-test
     , containers ==0.6.*
     , directory ==1.3.*
     , filepath ==1.4.*
+    , filepattern ==0.1.*
     , hashable ==1.4.*
     , henhen
     , mtl >=2.2 && <2.4
