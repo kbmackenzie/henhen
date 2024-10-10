@@ -21,7 +21,6 @@ import Data.Aeson
     , (.:?)
     , object
     )
-import Data.Aeson.Types (Parser)
 import Data.Text (Text)
 import Data.HashSet (HashSet)
 import Data.HashMap.Strict (HashMap)

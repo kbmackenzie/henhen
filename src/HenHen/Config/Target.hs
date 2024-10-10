@@ -11,6 +11,7 @@ module HenHen.Config.Target
 , getTargetMeta
 , getTargetKey
 , getTargetMap
+, isModuleTarget
 ) where
 
 import Data.Aeson
@@ -66,6 +67,10 @@ getTargetKey = metaKey . getTargetMeta
 getTargetMap :: [Target] -> HashMap MetaKey Target
 getTargetMap = HashMap.fromList . map toPair
     where toPair target = (getTargetKey target, target)
+
+isModuleTarget :: Target -> Bool
+isModuleTarget (Module _ _) = True
+isModuleTarget _ = False
 
 ------------------------------------
 -- JSON/YAML parsing:
