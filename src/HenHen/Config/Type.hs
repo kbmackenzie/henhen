@@ -12,7 +12,7 @@ module HenHen.Config.Type
 , getUninstaller
 ) where
 
-import HenHen.Config.Target (Target)
+import HenHen.Config.Target (Target, MetaKey, getTargetMap)
 import Data.Aeson
     ( ToJSON(..)
     , FromJSON(..)
@@ -21,6 +21,7 @@ import Data.Aeson
     , (.:?)
     , object
     )
+import Data.Aeson.Types (Parser)
 import Data.Text (Text)
 import Data.HashSet (HashSet)
 import Data.HashMap.Strict (HashMap)
@@ -35,7 +36,7 @@ data HenHenConfig = HenHenConfig
     , configFetch   :: HashMap String String    -- From where to fetch custom dependencies.
     , configSources :: Maybe FilePath           -- Source root.
     , configAliases :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
-    , configTargets :: [Target]              }  -- Build targets.
+    , configTargets :: HashMap MetaKey Target } -- Build targets.
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String
@@ -70,7 +71,7 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "fetch")
         <*> (obj .:? "source-folder")
         <*> (obj .:? "aliases")
-        <*> optional mempty (obj .:? "targets")
+        <*> fmap getTargetMap (optional mempty (obj .:? "targets"))
 
 instance ToJSON HenHenConfig where
     toJSON config = object
@@ -79,7 +80,7 @@ instance ToJSON HenHenConfig where
         , "fetch"         .= configFetch config
         , "source-folder" .= configSources config
         , "aliases"       .= configAliases config 
-        , "targets"       .= configTargets config ]
+        , "targets"       .= HashMap.elems (configTargets config) ]
 
 ------------------------------------
 -- Pretty-printing:
