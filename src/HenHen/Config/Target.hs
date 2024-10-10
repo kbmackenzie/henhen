@@ -48,7 +48,6 @@ newtype EggOptions = EggOptions
 data ExecutableOptions = ExecutableOptions
     { executableOutput   :: Maybe FilePath
     , executableSource   :: Maybe FilePath
-    , executableStatic   :: Bool
     , executableIncludes :: [FilePath]     }
 
 ------------------------------------
@@ -79,7 +78,6 @@ parseExecutable :: Object -> Parser ExecutableOptions
 parseExecutable obj = ExecutableOptions
     <$> (obj .:? "output")
     <*> (obj .:? "source")
-    <*> optional True (obj .:? "static")
     <*> optional mempty (obj .:? "includes")
 
 instance FromJSON Target where
@@ -110,5 +108,4 @@ instance ToJSON Target where
         [ "tag"       .= ("exeuctable" :: String)
         , "output"    .= executableOutput options
         , "source"    .= executableSource options
-        , "static"    .= executableStatic options
         , "includes"  .= executableIncludes options ]
