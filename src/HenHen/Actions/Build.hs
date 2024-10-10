@@ -32,7 +32,7 @@ import Data.List (singleton)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
-getObjects :: [MetaKey] -> [String]
+getObjects :: [MetaKey] -> [FilePath]
 getObjects = map $ (`addExtension` "o") . getKey
 
 getUses :: [MetaKey] -> [String]
