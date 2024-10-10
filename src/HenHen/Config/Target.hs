@@ -23,7 +23,7 @@ import Data.Aeson
 import Data.Aeson.Types (Parser, Pair)
 import HenHen.Utils.Maybe (optional)
 import qualified Data.Text as Text
-import Data.Char (toLower)
+import Data.Char (toLower, isAlphaNum)
 
 data Meta = Meta
     { metaKey     :: MetaKey
@@ -49,7 +49,10 @@ newtype EggOptions = EggOptions
 ------------------------------------
 
 instance FromJSON MetaKey where
-    parseJSON = withText "MetaKey" (return . MetaKey . Text.unpack)
+    parseJSON = withText "MetaKey" $
+        \text -> if Text.all isAlphaNum text
+            then (return . MetaKey . Text.unpack) text
+            else fail ("Invalid target key: " ++ show text)
 
 instance ToJSON MetaKey where
     toJSON = toJSON . getKey
