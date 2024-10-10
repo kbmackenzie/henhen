@@ -11,6 +11,7 @@ module HenHen.Config
 , MetaKey(..)
 , SourceOptions(..)
 , EggOptions(..)
+, getTargetKey
 ) where
 
 import HenHen.Config.Type
@@ -28,4 +29,5 @@ import HenHen.Config.Target
     , MetaKey(..)
     , SourceOptions(..)
     , EggOptions(..)
+    , getTargetKey
     )

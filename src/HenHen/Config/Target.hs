@@ -7,6 +7,7 @@ module HenHen.Config.Target
 , MetaKey(..)
 , SourceOptions(..)
 , EggOptions(..)
+, getTargetKey
 ) where
 
 import Data.Aeson
@@ -43,6 +44,14 @@ data SourceOptions = SourceOptions
 
 newtype EggOptions = EggOptions
     { eggDirectory   :: Maybe FilePath }
+
+------------------------------------
+-- Utilities:
+------------------------------------
+getTargetKey :: Target -> MetaKey
+getTargetKey (Module meta _) = metaKey meta
+getTargetKey (Egg meta _) = metaKey meta
+getTargetKey (Executable meta _) = metaKey meta
 
 ------------------------------------
 -- JSON/YAML parsing:
