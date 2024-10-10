@@ -16,7 +16,7 @@ import HenHen.Environment
     ( chickenBuild
     , EnvironmentTask(..)
     )
-import System.FilePath ((</>), normalise, replaceExtension, dropExtension)
+import System.FilePath ((</>), normalise, addExtension, replaceExtension, dropExtension)
 import System.Directory (createDirectoryIfMissing)
 import Data.Maybe (fromMaybe)
 
@@ -32,7 +32,7 @@ buildSource :: Bool -> GenerateTask SourceOptions
 buildSource isModule config meta options = do
     let name = (getKey . metaKey) meta
     let sourceDir = maybe id ((</>) . normalise) (configSources config)
-    let source = sourceDir $ fromMaybe (name ++ ".scm") (sourcePath options)
+    let source = sourceDir $ fromMaybe (addExtension name "scm") (sourcePath options)
 
     let outputDir = chickenBuild </> name
     let output = outputDir </> if isModule
