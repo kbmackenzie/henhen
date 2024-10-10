@@ -9,9 +9,8 @@ module HenHen.Config
 , Target(..)
 , Meta(..)
 , MetaKey(..)
-, ModuleOptions(..)
+, SourceOptions(..)
 , EggOptions(..)
-, ExecutableOptions(..)
 ) where
 
 import HenHen.Config.Type
@@ -27,7 +26,6 @@ import HenHen.Config.Target
     ( Target(..)
     , Meta(..)
     , MetaKey(..)
-    , ModuleOptions(..)
+    , SourceOptions(..)
     , EggOptions(..)
-    , ExecutableOptions(..)
     )
