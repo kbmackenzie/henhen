@@ -1,10 +1,11 @@
 module HenHen.Environment
 ( Environment
 , createEnvironment
-, getLocalChicken
+, localChicken
 , EnvironmentTask(..)
 , runEnvironmentTask
 ) where
 
-import HenHen.Environment.Type (Environment, createEnvironment, getLocalChicken)
+import HenHen.Environment.Folders (localChicken)
+import HenHen.Environment.Type (Environment, createEnvironment)
 import HenHen.Environment.Task (EnvironmentTask(..), runEnvironmentTask)
