@@ -1,5 +1,5 @@
 module HenHen.Actions.Build
-( buildTarget
+( build
 ) where
 
 import HenHen.Config
@@ -11,14 +11,24 @@ import HenHen.Config
     , SourceOptions(..)
     , EggOptions(..)
     , getInstaller
+    , getTargetMeta
+    , getTargetKey
+    , getTargetMap
     )
 import HenHen.Environment
     ( chickenBuild
     , EnvironmentTask(..)
+    , runEnvironmentTask
+    , Environment
     )
 import System.FilePath ((</>), normalise, addExtension, replaceExtension, dropExtension)
 import System.Directory (createDirectoryIfMissing)
 import Data.Maybe (fromMaybe)
+import HenHen.Packager (Packager, throwError)
+import Data.HashSet (HashSet)
+import qualified Data.HashSet as HashSet
+import qualified Data.HashMap.Strict as HashMap
+import Control.Monad (foldM, foldM_)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
@@ -80,3 +90,31 @@ buildTarget config target = case target of
     (Module meta options)     -> buildSource True config meta options
     (Egg meta options)        -> buildEgg config meta options
     (Executable meta options) -> buildSource False config meta options
+
+build :: HenHenConfig -> Environment -> Packager ()
+build config env = do
+    let targetMap = getTargetMap (configTargets config)
+
+    let getTarget :: MetaKey -> Packager Target
+        getTarget key = case HashMap.lookup key targetMap of
+            (Just target) -> return target
+            Nothing       -> throwError ("Target doesn't exist: " ++ (show . getKey) key)
+
+    let getDependencies :: Target -> Packager [Target]
+        getDependencies target = do
+            let keys = (metaDeps . getTargetMeta) target
+            mapM getTarget keys
+
+    let deepBuild :: HashSet MetaKey -> Target -> Packager (HashSet MetaKey)
+        deepBuild visited target = do
+            let self = getTargetKey target
+            if HashSet.member self visited then return visited else do
+                -- Build all dependencies recursively, in order, storing the new 'visited' set:
+                let visitedSelf = HashSet.insert self visited
+                let buildDependencies = foldM deepBuild visitedSelf =<< getDependencies target
+
+                visitedDependencies <- buildDependencies
+                runEnvironmentTask env (buildTarget config target)
+                return visitedDependencies
+
+    foldM_ deepBuild mempty $ configTargets config
