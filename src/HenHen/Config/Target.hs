@@ -1,5 +1,6 @@
 {-# LANGUAGE StrictData #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module HenHen.Config.Target
 ( Target(..)
@@ -25,6 +26,7 @@ import Data.Aeson.Types (Parser, Pair)
 import HenHen.Utils.Maybe (optional)
 import qualified Data.Text as Text
 import Data.Char (toLower, isAlphaNum)
+import Data.Hashable (Hashable)
 
 data Meta = Meta
     { metaKey     :: MetaKey
@@ -32,6 +34,7 @@ data Meta = Meta
     , metaOptions :: [String]  }
 
 newtype MetaKey = MetaKey { getKey :: String }
+    deriving (Eq, Ord, Hashable)
 
 data Target =
       Module     Meta SourceOptions
