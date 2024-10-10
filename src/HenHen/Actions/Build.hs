@@ -17,10 +17,12 @@ import HenHen.Config
     )
 import HenHen.Environment
     ( Environment
+    , localChicken
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
 import System.FilePath ((</>), normalise, addExtension)
+import System.Directory (createFileLink, createDirectoryIfMissing)
 import Data.Maybe (fromMaybe)
 import HenHen.Packager (Packager, throwError)
 import Data.HashSet (HashSet)
@@ -80,6 +82,18 @@ buildEgg config meta options = do
         , taskErrorReport = Just . buildFail $ "egg " ++ show name
         , afterTask       = Nothing }
 
+buildBinary :: GenerateTask SourceOptions
+buildBinary config meta options = do
+    let task = buildSource True config meta options
+    let after :: IO ()
+        after = do
+            -- Create symlink in '.chicken/bin'!
+            let binary  = (getKey . metaKey) meta -- todo: on windows, add '.exe' extension.
+            let binPath = localChicken </> "bin"
+            createDirectoryIfMissing True binPath
+            createFileLink binary (binPath </> binary)
+    task { afterTask = Just after }
+
 buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
@@ -88,7 +102,7 @@ buildTarget :: HenHenConfig -> Target -> EnvironmentTask
 buildTarget config target = case target of
     (Module meta options)     -> buildSource True config meta options
     (Egg meta options)        -> buildEgg config meta options
-    (Executable meta options) -> buildSource False config meta options
+    (Executable meta options) -> buildBinary config meta options
 
 build :: HenHenConfig -> Environment -> Packager ()
 build config env = do
