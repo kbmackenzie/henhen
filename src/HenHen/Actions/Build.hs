@@ -13,7 +13,6 @@ import HenHen.Config
     , getInstaller
     , getTargetMeta
     , getTargetKey
-    , getTargetMap
     )
 import HenHen.Environment
     ( Environment
@@ -33,23 +32,30 @@ import Data.List (singleton)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
-getObjects :: Meta -> [String]
-getObjects = map ((`addExtension` "o") . getKey) . metaDeps
+getObjects :: [MetaKey] -> [String]
+getObjects = map $ (`addExtension` "o") . getKey
 
-getUses :: Meta -> [String]
-getUses = concatMap (("-uses" :) . singleton . getKey) . metaDeps
+getUses :: [MetaKey] -> [String]
+getUses = concatMap $ ("-uses" :) . singleton . getKey
 
 buildSource :: Bool -> GenerateTask SourceOptions
 buildSource isModule config meta options = do
+    let targetMap = configTargets config
+
     let name = (getKey . metaKey) meta
-    let sourceDir = maybe id ((</>) . normalise) (configSources config)
-    let source = sourceDir $ fromMaybe (addExtension name "scm") (sourcePath options)
+    let srcDir = maybe id ((</>) . normalise) (configSources config)
+    let source = srcDir $ fromMaybe (addExtension name "scm") (sourcePath options)
 
     let output = "." </> if isModule
         then addExtension name "o"
         else name
 
+    let filterModules :: [MetaKey] -> [MetaKey]
+        filterModules = filter (`HashMap.member` targetMap)
+
     let coreFlags = ["-static", "-setup-mode", "-O2"]
+    let dependencies = filterModules (metaDeps meta)
+
     let arguments = if isModule
         then concat
             [ ["-c", "-J", "-regenerate-import-libraries", "-M"]
@@ -58,8 +64,8 @@ buildSource isModule config meta options = do
             , metaOptions meta ]
         else concat
             [ ["-o", output, source]
-            , getObjects meta
-            , getUses meta
+            , getObjects dependencies
+            , getUses dependencies
             , coreFlags
             , metaOptions meta ] 
 
@@ -106,7 +112,7 @@ buildTarget config target = case target of
 
 build :: HenHenConfig -> Environment -> Packager ()
 build config env = do
-    let targetMap = getTargetMap (configTargets config)
+    let targetMap = configTargets config
 
     let getTarget :: MetaKey -> Packager Target
         getTarget key = case HashMap.lookup key targetMap of
