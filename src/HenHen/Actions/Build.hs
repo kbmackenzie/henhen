@@ -8,9 +8,8 @@ import HenHen.Config
     , Target(..)
     , Meta(..)
     , MetaKey(..)
-    , ModuleOptions(..)
+    , SourceOptions(..)
     , EggOptions(..)
-    , ExecutableOptions(..)
     , getInstaller
     )
 import HenHen.Environment
@@ -29,17 +28,24 @@ getIncludes meta = do
     let includes flag = map $ (flag ++) . (chickenBuild </>) . getKey
     includes "-I " dependencies ++ includes "-C -I" dependencies
 
-buildModule :: GenerateTask ModuleOptions
-buildModule config meta options = do
-    let name      = (getKey . metaKey) meta
+buildSource :: Bool -> GenerateTask SourceOptions
+buildSource isModule config meta options = do
+    let name = (getKey . metaKey) meta
     let sourceDir = maybe id ((</>) . normalise) (configSources config)
-    let source    = sourceDir $ fromMaybe (name ++ ".scm") (moduleSource options)
+    let source = sourceDir $ fromMaybe (name ++ ".scm") (sourcePath options)
 
     let outputDir = chickenBuild </> name
-    let output    = outputDir </> replaceExtension source "o"
+    let output = outputDir </> if isModule
+        then replaceExtension source "o"
+        else dropExtension source
+
+    let specialArgs = if isModule
+        then ["-c", "-J", "-regenerate-import-libraries", "-M"]
+        else mempty
+
     let arguments = concat
-            [ ["-static", "-regenerate-import-libraries", "-M",
-               "-c", "-J", source, "-unit", name, "-o", output]
+            [ specialArgs
+            , [source, "-unit", name, "-o", output]
             , getIncludes meta
             , metaOptions meta ]
     let preparations = createDirectoryIfMissing True outputDir
@@ -65,35 +71,12 @@ buildEgg config meta options = do
         , taskPrepare     = Nothing
         , nextTask        = Nothing }
 
-buildExecutable :: GenerateTask ExecutableOptions
-buildExecutable config meta options = do
-    let name      = (getKey . metaKey) meta
-    let sourceDir = maybe id ((</>) . normalise) (configSources config)
-    let source    = sourceDir $ fromMaybe (name ++ ".scm") (executableSource options)
-
-    let outputDir = chickenBuild </> name
-    let output    = outputDir </> dropExtension source
-    let arguments = concat
-            [ ["-static", "-o", output, source]
-            , getIncludes meta
-            , metaOptions meta ]
-    let preparations = createDirectoryIfMissing True outputDir
-
-    let compiler  = getCompiler config
-    EnvironmentTask
-        { taskCommand     = compiler
-        , taskArguments   = arguments
-        , taskDirectory   = Nothing
-        , taskErrorReport = Just . buildFail $ "executable " ++ show name
-        , taskPrepare     = Just preparations
-        , nextTask        = Nothing }
-
 buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
 buildTarget :: HenHenConfig -> Target -> EnvironmentTask
 buildTarget config target = case target of
-    (Module meta options)     -> buildModule config meta options
+    (Module meta options)     -> buildSource True config meta options
     (Egg meta options)        -> buildEgg config meta options
-    (Executable meta options) -> buildExecutable config meta options
+    (Executable meta options) -> buildSource False config meta options
