@@ -16,6 +16,7 @@ newtype Packager a = Packager { runPackager :: ExceptT String IO a }
     deriving ( Functor
              , Applicative
              , Monad
+             , MonadFail
              , MonadError String
              , MonadIO
              )
