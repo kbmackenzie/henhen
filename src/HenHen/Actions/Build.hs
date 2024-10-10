@@ -38,7 +38,8 @@ buildModule config meta options = do
     let outputDir = chickenBuild </> name
     let output    = outputDir </> replaceExtension source "o"
     let arguments = concat
-            [ ["-static", "-c", "-J", source, "-unit", name, "-o", output]
+            [ ["-static", "-regenerate-import-libraries", "-M",
+               "-c", "-J", source, "-unit", name, "-o", output]
             , getIncludes meta
             , metaOptions meta ]
     let preparations = createDirectoryIfMissing True outputDir
