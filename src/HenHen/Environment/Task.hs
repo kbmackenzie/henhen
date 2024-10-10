@@ -16,8 +16,7 @@ data EnvironmentTask = EnvironmentTask
     , taskArguments   :: [String]
     , taskDirectory   :: Maybe FilePath
     , taskErrorReport :: Maybe (String -> String)
-    , taskPrepare     :: Maybe (IO ())
-    , nextTask        :: Maybe EnvironmentTask   }
+    , afterTask       :: Maybe (IO ()) }
 
 runEnvironmentTask :: Environment -> EnvironmentTask -> Packager ()
 runEnvironmentTask env task = do
@@ -25,8 +24,6 @@ runEnvironmentTask env task = do
     let setters = setEnv env . setLocation
     let process = setters $ proc (taskCommand task) (taskArguments task)
 
-    -- Run preparations:
-    mapM_ liftIO (taskPrepare task)
     runProcess process >>= \case
         ExitSuccess     -> return ()
         (ExitFailure n) -> do
@@ -34,4 +31,4 @@ runEnvironmentTask env task = do
             let command = unwords (taskCommand task : taskArguments task)
             let message = concat ["process ", show command, " exited with code: ", show n]
             (throwError . report) message
-    mapM_ (runEnvironmentTask env) (nextTask task)
+    mapM_ liftIO (afterTask task)

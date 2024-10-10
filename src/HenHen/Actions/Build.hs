@@ -67,8 +67,7 @@ buildSource isModule config meta options = do
         , taskArguments   = arguments
         , taskDirectory   = Nothing
         , taskErrorReport = Just . buildFail $ "module " ++ show name
-        , taskPrepare     = Nothing
-        , nextTask        = Nothing }
+        , afterTask       = Nothing }
 
 buildEgg :: GenerateTask EggOptions
 buildEgg config meta options = do
@@ -79,8 +78,7 @@ buildEgg config meta options = do
         , taskArguments   = []
         , taskDirectory   = eggDirectory options
         , taskErrorReport = Just . buildFail $ "egg " ++ show name
-        , taskPrepare     = Nothing
-        , nextTask        = Nothing }
+        , afterTask       = Nothing }
 
 buildFail :: String -> String -> String
 buildFail name message = concat
