@@ -17,21 +17,17 @@ import HenHen.Environment
     ( chickenBuild
     , EnvironmentTask(..)
     )
-import System.FilePath ((</>), normalise, replaceExtension, dropExtension, addExtension)
+import System.FilePath ((</>), normalise, replaceExtension, dropExtension)
 import System.Directory (createDirectoryIfMissing)
 import Data.Maybe (fromMaybe)
-import Data.List (singleton)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
 getIncludes :: Meta -> [String]
-getIncludes = map (("-I" ++) . (chickenBuild </>) . getKey) . metaDeps
-
-getUses :: Meta -> [String]
-getUses = concatMap (("-uses" :) . singleton . getKey) . metaDeps
-
-getObjects :: Meta -> [String]
-getObjects = map ((chickenBuild </>) . (`addExtension` "o") . getKey) . metaDeps
+getIncludes meta = do
+    let dependencies = metaDeps meta
+    let includes flag = map $ (flag ++) . (chickenBuild </>) . getKey
+    includes "-I " dependencies ++ includes "-C -I" dependencies
 
 buildModule :: GenerateTask ModuleOptions
 buildModule config meta options = do
@@ -43,7 +39,7 @@ buildModule config meta options = do
     let output    = outputDir </> replaceExtension source "o"
     let arguments = concat
             [ ["-static", "-c", "-J", source, "-unit", name, "-o", output]
-            , getUses meta
+            , getIncludes meta
             , metaOptions meta ]
     let preparations = createDirectoryIfMissing True outputDir
 
@@ -78,8 +74,7 @@ buildExecutable config meta options = do
     let output    = outputDir </> dropExtension source
     let arguments = concat
             [ ["-static", "-o", output, source]
-            , getObjects meta
-            , getUses meta
+            , getIncludes meta
             , metaOptions meta ]
     let preparations = createDirectoryIfMissing True outputDir
 
