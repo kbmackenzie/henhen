@@ -35,7 +35,7 @@ data HenHenConfig = HenHenConfig
     { configName    :: Maybe String             -- Project name.
     , configDeps    :: HashSet String           -- Project dependencies.
     , configFetch   :: HashMap String String    -- From where to fetch custom dependencies.
-    , configSources :: Maybe FilePath           -- Source root.
+    , configSrcDir  :: Maybe FilePath           -- Source root.
     , configAliases :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
     , configTargets :: HashMap MetaKey Target } -- Build targets.
 
@@ -79,7 +79,7 @@ instance ToJSON HenHenConfig where
         [ "name"          .= configName config
         , "dependencies"  .= configDeps config
         , "fetch"         .= configFetch config
-        , "source-folder" .= configSources config
+        , "source-folder" .= configSrcDir config
         , "aliases"       .= configAliases config 
         , "targets"       .= HashMap.elems (configTargets config) ]
 
@@ -122,4 +122,4 @@ getUninstaller :: HenHenConfig -> String
 getUninstaller = getAlias "chicken-uninstall" uninstallerAlias
 
 getSourcePath :: HenHenConfig -> FilePath -> FilePath
-getSourcePath = maybe id ((</>) . normalise) . configSources
+getSourcePath = maybe id ((</>) . normalise) . configSrcDir

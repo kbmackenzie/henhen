@@ -45,7 +45,7 @@ buildSource isModule config meta options = do
     let targetMap = configTargets config
 
     let name = (getKey . metaKey) meta
-    let srcDir = maybe id ((</>) . normalise) (configSources config)
+    let srcDir = maybe id ((</>) . normalise) (configSrcDir config)
     let source = srcDir $ fromMaybe (addExtension name "scm") (sourcePath options)
 
     let output = "." </> if isModule
