@@ -10,12 +10,11 @@ module HenHen.Cache.Manage
 
 import HenHen.Packager (Packager, catchError, liftEither)
 import HenHen.Cache.Type (CacheData(..))
-import HenHen.Utils.Yaml (readYaml)
 import HenHen.Utils.IO (readFileSafe, getFileModTime, writeFileSafe)
+import HenHen.Utils.Json (readJson, writeJson)
 import HenHen.Utils.Time (getPosixTimeInSeconds)
 import HenHen.Environment (localChicken)
 import System.FilePath ((</>))
-import Data.Yaml (encode)
 import qualified Data.HashMap.Strict as HashMap
 
 cachePath :: FilePath
@@ -24,13 +23,13 @@ cachePath = localChicken </> "build-info.json"
 readCache :: Packager CacheData
 readCache = do
     contents <- readFileSafe cachePath
-    liftEither $ readYaml contents
+    liftEither $ readJson contents
 
 tryGetCache :: Packager (Maybe CacheData)
 tryGetCache = fmap Just readCache `catchError` \_ -> return Nothing
 
 writeCache :: CacheData -> Packager ()
-writeCache = writeFileSafe cachePath . encode
+writeCache = writeFileSafe cachePath . writeJson
 
 createCache :: [FilePath] -> Packager CacheData
 createCache files = do
