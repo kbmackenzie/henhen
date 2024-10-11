@@ -6,6 +6,7 @@ module HenHen.Config
 , getInterpreter
 , getStatus
 , getUninstaller
+, getSourcePath
 , Target(..)
 , Meta(..)
 , MetaKey(..)
@@ -25,6 +26,7 @@ import HenHen.Config.Type
     , getInterpreter
     , getStatus
     , getUninstaller
+    , getSourcePath
     )
 import HenHen.Config.Target
     ( Target(..)

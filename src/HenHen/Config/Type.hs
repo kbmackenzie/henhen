@@ -10,6 +10,7 @@ module HenHen.Config.Type
 , getInterpreter
 , getStatus
 , getUninstaller
+, getSourcePath
 ) where
 
 import HenHen.Config.Target (Target, MetaKey, getTargetMap)
@@ -24,10 +25,11 @@ import Data.Aeson
 import Data.Text (Text)
 import Data.HashSet (HashSet)
 import Data.HashMap.Strict (HashMap)
+import HenHen.Utils.Maybe (optional)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
-import HenHen.Utils.Maybe (optional)
+import System.FilePath ((</>), normalise, addExtension)
 
 data HenHenConfig = HenHenConfig
     { configName    :: Maybe String             -- Project name.
@@ -118,3 +120,6 @@ getStatus = getAlias "chicken-status" statusAlias
 
 getUninstaller :: HenHenConfig -> String
 getUninstaller = getAlias "chicken-uninstall" uninstallerAlias
+
+getSourcePath :: HenHenConfig -> FilePath -> FilePath
+getSourcePath = maybe id ((</>) . normalise) . configSources
