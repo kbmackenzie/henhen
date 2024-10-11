@@ -1,6 +1,7 @@
 module HenHen.Utils.IO
 ( readFileSafe
 , getFileModTime
+, writeFileSafe
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -28,3 +29,11 @@ getFileModTime path = (liftIO >=> liftEither) $ do
         let message = fileError "couldn't get modification date for file" path err
         return $ Left message
     return $ fmap (round . utcTimeToPOSIXSeconds) utcTime
+
+
+writeFileSafe :: FilePath -> ByteString -> Packager ()
+writeFileSafe path content = (liftIO >=> liftEither) $ do
+    let writer = (fmap Right .) . ByteString.writeFile
+    writer path content `catch` \err -> do
+        let message = fileError "couldn't write file" path err
+        return $ Left message
