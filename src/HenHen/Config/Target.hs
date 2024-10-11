@@ -46,9 +46,8 @@ data Target =
     | Egg        Meta EggOptions
     | Executable Meta SourceOptions
 
-data SourceOptions = SourceOptions
-    { sourcePath     :: Maybe FilePath
-    , sourceIncludes :: [FilePath] }
+newtype SourceOptions = SourceOptions
+    { sourcePath     :: Maybe FilePath }
 
 newtype EggOptions = EggOptions
     { eggDirectory   :: Maybe FilePath }
@@ -92,9 +91,7 @@ parseMeta obj = Meta
     <*> optional mempty (obj .:? "extra-options")
 
 parseSource :: Object -> Parser SourceOptions
-parseSource obj = SourceOptions
-    <$> (obj .:? "source")
-    <*> optional mempty (obj .:? "includes")
+parseSource obj = SourceOptions <$> (obj .:? "source")
 
 parseEgg :: Object -> Parser EggOptions
 parseEgg obj = EggOptions <$> (obj .: "directory")
@@ -118,12 +115,10 @@ serializeMeta meta =
 instance ToJSON Target where
     toJSON (Module meta options) = object $ serializeMeta meta ++
         [ "tag"       .= ("module" :: String)
-        , "source"    .= sourcePath options
-        , "includes"  .= sourceIncludes options ]
+        , "source"    .= sourcePath options ]
     toJSON (Egg meta options) = object $ serializeMeta meta ++
         [ "tag"       .= ("egg" :: String)
         , "directory" .= eggDirectory options ]
     toJSON (Executable meta options) = object $ serializeMeta meta ++
         [ "tag"       .= ("executable" :: String)
-        , "source"    .= sourcePath options
-        , "includes"  .= sourceIncludes options ]
+        , "source"    .= sourcePath options ]
