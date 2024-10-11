@@ -36,7 +36,8 @@ import qualified Data.HashMap.Strict as HashMap
 data Meta = Meta
     { metaKey     :: MetaKey
     , metaDeps    :: [MetaKey]
-    , metaOptions :: [String]  }
+    , metaTrack   :: [FilePath]
+    , metaOptions :: [String]   }
 
 newtype MetaKey = MetaKey { getKey :: String }
     deriving (Eq, Ord, Hashable)
@@ -88,6 +89,7 @@ parseMeta :: Object -> Parser Meta
 parseMeta obj = Meta
     <$> (obj .: "name")
     <*> optional mempty (obj .:? "dependencies")
+    <*> optional mempty (obj .:? "track")
     <*> optional mempty (obj .:? "extra-options")
 
 parseSource :: Object -> Parser SourceOptions
@@ -110,6 +112,7 @@ serializeMeta :: Meta -> [Pair]
 serializeMeta meta =
     [ "name"          .= metaKey  meta
     , "dependencies"  .= metaDeps meta
+    , "track"         .= metaTrack meta
     , "extra-options" .= metaOptions meta ]
 
 instance ToJSON Target where
