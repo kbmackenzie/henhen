@@ -28,6 +28,7 @@ library
       HenHen.Actions.Clean
       HenHen.Actions.Interpret
       HenHen.Actions.Run
+      HenHen.Cache.Type
       HenHen.Config
       HenHen.Config.Target
       HenHen.Config.Type
@@ -36,8 +37,10 @@ library
       HenHen.Environment.Task
       HenHen.Environment.Type
       HenHen.Packager
+      HenHen.Utils.FilePath
       HenHen.Utils.Maybe
       HenHen.Utils.String
+      HenHen.Utils.Time
   other-modules:
       Paths_henhen
   autogen-modules:
@@ -59,6 +62,7 @@ library
     , mtl >=2.2 && <2.4
     , process ==1.6.*
     , text ==2.0.*
+    , time ==1.12.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
     , yaml ==0.11.*
@@ -88,6 +92,7 @@ executable henhen-exe
     , mtl >=2.2 && <2.4
     , process ==1.6.*
     , text ==2.0.*
+    , time ==1.12.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
     , yaml ==0.11.*
@@ -118,6 +123,7 @@ test-suite henhen-test
     , mtl >=2.2 && <2.4
     , process ==1.6.*
     , text ==2.0.*
+    , time ==1.12.*
     , typed-process ==0.2.*
     , unordered-containers ==0.2.*
     , yaml ==0.11.*
