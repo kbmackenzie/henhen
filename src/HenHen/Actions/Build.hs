@@ -5,6 +5,7 @@ module HenHen.Actions.Build
 import HenHen.Config
     ( HenHenConfig(..)
     , getCompiler
+    , getSourcePath
     , Target(..)
     , Meta(..)
     , MetaKey(..)
@@ -45,8 +46,7 @@ buildSource isModule config meta options = do
     let targetMap = configTargets config
 
     let name = (getKey . metaKey) meta
-    let srcDir = maybe id ((</>) . normalise) (configSrcDir config)
-    let source = srcDir $ fromMaybe (addExtension name "scm") (sourcePath options)
+    let source = getSourcePath config $ fromMaybe (addExtension name "scm") (sourcePath options)
 
     let output = "." </> if isModule
         then addExtension name "o"
