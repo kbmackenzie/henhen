@@ -26,8 +26,7 @@ library
   exposed-modules:
       HenHen.Actions.Build
       HenHen.Actions.Clean
-      HenHen.Actions.Interpret
-      HenHen.Actions.Run
+      HenHen.Cache.Manage
       HenHen.Cache.Type
       HenHen.Config
       HenHen.Config.Target
@@ -38,9 +37,11 @@ library
       HenHen.Environment.Type
       HenHen.Packager
       HenHen.Utils.FilePath
+      HenHen.Utils.IO
       HenHen.Utils.Maybe
       HenHen.Utils.String
       HenHen.Utils.Time
+      HenHen.Utils.Yaml
   other-modules:
       Paths_henhen
   autogen-modules:
