@@ -38,6 +38,7 @@ library
       HenHen.Packager
       HenHen.Utils.FilePath
       HenHen.Utils.IO
+      HenHen.Utils.Json
       HenHen.Utils.Maybe
       HenHen.Utils.String
       HenHen.Utils.Time
