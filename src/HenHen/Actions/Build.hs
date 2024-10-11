@@ -21,6 +21,7 @@ import HenHen.Environment
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
+import HenHen.Utils.FilePath (toExecutablePath)
 import System.FilePath ((</>), normalise, addExtension)
 import System.Directory (createFileLink, createDirectoryIfMissing)
 import Data.Maybe (fromMaybe)
@@ -49,7 +50,7 @@ buildSource isModule config meta options = do
 
     let output = "." </> if isModule
         then addExtension name "o"
-        else name
+        else toExecutablePath name
 
     let filterModules :: [MetaKey] -> [MetaKey]
         filterModules = filter $ maybe False isModuleTarget . (`HashMap.lookup` targetMap)
