@@ -23,8 +23,8 @@ import HenHen.Environment
     , runEnvironmentTask
     )
 import HenHen.Utils.FilePath (toExecutablePath)
+import HenHen.Utils.IO (fileLink)
 import System.FilePath ((</>), addExtension)
-import System.Directory (createFileLink)
 import Data.Maybe (fromMaybe)
 import HenHen.Packager (Packager, throwError)
 import Data.HashSet (HashSet)
@@ -95,13 +95,13 @@ buildEgg config meta options = do
 buildBinary :: GenerateTask SourceOptions
 buildBinary config meta options = do
     let task = buildSource True config meta options
-    let after :: IO ()
+    let after :: Packager ()
         after = do
             -- Create symlink in '.chicken/bin'!
             let binary = toExecutablePath . getKey . metaKey $ meta
             let inputPath  = localBuild </> binary
             let outputPath = localChickenBin </> binary
-            createFileLink inputPath outputPath
+            fileLink inputPath outputPath
     task { afterTask = Just after }
 
 buildFail :: String -> String -> String
