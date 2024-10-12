@@ -6,7 +6,7 @@ module HenHen.Environment.Task
 , runEnvironmentTask
 ) where
 
-import HenHen.Packager (Packager, throwError, liftIO)
+import HenHen.Packager (Packager, throwError)
 import HenHen.Environment.Type (Environment)
 import System.Process.Typed (proc, setEnv, setWorkingDir, runProcess, ExitCode(..))
 import Data.Maybe (fromMaybe)
@@ -16,7 +16,7 @@ data EnvironmentTask = EnvironmentTask
     , taskArguments   :: [String]
     , taskDirectory   :: Maybe FilePath
     , taskErrorReport :: Maybe (String -> String)
-    , afterTask       :: Maybe (IO ()) }
+    , afterTask       :: Maybe (Packager ()) }
 
 runEnvironmentTask :: Environment -> EnvironmentTask -> Packager ()
 runEnvironmentTask env task = do
@@ -31,4 +31,4 @@ runEnvironmentTask env task = do
             let command = unwords (taskCommand task : taskArguments task)
             let message = concat ["process ", show command, " exited with code: ", show n]
             (throwError . report) message
-    mapM_ liftIO (afterTask task)
+    sequence_ (afterTask task)
