@@ -2,6 +2,9 @@ module HenHen.Utils.IO
 ( readFileSafe
 , getFileModTime
 , writeFileSafe
+, fileLink
+, EntryType(..)
+, exists
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -9,7 +12,13 @@ import Data.ByteString (ByteString)
 import Control.Exception (catch, IOException)
 import Control.Monad ((>=>))
 import qualified Data.ByteString as ByteString
-import System.Directory (getModificationTime)
+import System.Directory
+    ( getModificationTime
+    , createFileLink
+    , doesFileExist
+    , doesDirectoryExist
+    , doesPathExist
+    )
 import Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 
 fileError :: String -> FilePath -> IOException -> String
@@ -36,4 +45,24 @@ writeFileSafe path content = (liftIO >=> liftEither) $ do
     let writer = (fmap Right .) . ByteString.writeFile
     writer path content `catch` \err -> do
         let message = fileError "couldn't write file" path err
+        return $ Left message
+
+fileLink :: FilePath -> FilePath -> Packager ()
+fileLink input output = (liftIO >=> liftEither) $ do
+    let link = (fmap Right .) . createFileLink
+    link input output `catch` \err -> do
+        let message = fileError "couldn't create symlink" output err
+        return $ Left message
+
+data EntryType = Any | File | Directory
+    deriving (Eq, Ord, Enum, Bounded, Show)
+
+exists :: EntryType -> FilePath -> Packager Bool
+exists entry path = (liftIO >=> liftEither) $ do
+    let check = fmap Right . case entry of
+            Any       -> doesPathExist
+            File      -> doesFileExist
+            Directory -> doesDirectoryExist
+    check path `catch` \err -> do
+        let message = fileError "couldnt't check existence" path err
         return $ Left message
