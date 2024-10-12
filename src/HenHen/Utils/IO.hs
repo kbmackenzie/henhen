@@ -6,6 +6,7 @@ module HenHen.Utils.IO
 , EntryType(..)
 , exists
 , createDirectory
+, globFiles
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -20,6 +21,10 @@ import System.Directory
     , doesDirectoryExist
     , doesPathExist
     , createDirectoryIfMissing
+    )
+import System.FilePattern.Directory
+    ( FilePattern
+    , getDirectoryFiles
     )
 import Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 
@@ -74,4 +79,11 @@ createDirectory recursive path = (liftIO >=> liftEither) $ do
     let create = fmap Right . createDirectoryIfMissing recursive
     create path `catch` \err -> do
         let message = fileError "couldn't create directory" path err
+        return $ Left message
+
+globFiles :: FilePath -> [FilePattern] -> Packager [FilePath]
+globFiles path patterns = (liftIO >=> liftEither) $ do
+    let glob = (fmap Right .) . getDirectoryFiles
+    glob path patterns `catch` \err -> do
+        let message = fileError "couldn't glob files in path" path err
         return $ Left message
