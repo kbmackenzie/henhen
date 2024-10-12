@@ -8,7 +8,7 @@ module HenHen.Environment.Folders
 import System.FilePath ((</>))
 
 localChicken :: FilePath
-localChicken = ".chicken"
+localChicken = ".henhen"
 
 localBuild :: FilePath
 localBuild = localChicken </> "_build"
