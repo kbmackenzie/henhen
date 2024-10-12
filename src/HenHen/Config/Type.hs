@@ -39,7 +39,7 @@ data HenHenConfig = HenHenConfig
     , configSourceDir :: Maybe FilePath           -- Source root.
     , configDeps      :: HashSet String           -- Project dependencies.
     , configFetch     :: HashMap String String    -- From where to fetch custom dependencies.
-    , configAliases   :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
+    , configAliases   :: Maybe Aliases            -- Aliases for CHICKEN Scheme binaries.
     , configTargets   :: HashMap MetaKey Target } -- Build targets.
 
 data Aliases = Aliases
