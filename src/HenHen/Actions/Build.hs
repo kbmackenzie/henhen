@@ -83,11 +83,12 @@ buildSource isModule config meta options = do
 buildEgg :: GenerateTask EggOptions
 buildEgg config meta options = do
     let name      = (getKey . metaKey) meta
+    let directory = maybe localBuild (localBuild </>) (eggDirectory options)
     let installer = getInstaller config
     EnvironmentTask
         { taskCommand     = installer
         , taskArguments   = []
-        , taskDirectory   = eggDirectory options
+        , taskDirectory   = Just directory
         , taskErrorReport = Just . buildFail $ "egg " ++ show name
         , afterTask       = Nothing }
 
