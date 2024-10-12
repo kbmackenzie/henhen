@@ -29,15 +29,18 @@ import HenHen.Utils.Maybe (optional)
 import qualified Data.HashMap.Strict as HashMap
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
-import System.FilePath ((</>), normalise, addExtension)
+import System.FilePattern (FilePattern)
+import System.FilePath ((</>), normalise)
 
 data HenHenConfig = HenHenConfig
-    { configName    :: Maybe String             -- Project name.
-    , configDeps    :: HashSet String           -- Project dependencies.
-    , configFetch   :: HashMap String String    -- From where to fetch custom dependencies.
-    , configSrcDir  :: Maybe FilePath           -- Source root.
-    , configAliases :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
-    , configTargets :: HashMap MetaKey Target } -- Build targets.
+    { configName      :: Maybe String             -- Project name.
+    , configSources   :: [FilePattern]            -- Patterns for matching source files.
+    , configDataFiles :: [FilePattern]            -- Patterns for matching data files.
+    , configSourceDir :: Maybe FilePath           -- Source root.
+    , configDeps      :: HashSet String           -- Project dependencies.
+    , configFetch     :: HashMap String String    -- From where to fetch custom dependencies.
+    , configAliases   :: Maybe Aliases            -- Aliases for Chicken SCHEME commands.
+    , configTargets   :: HashMap MetaKey Target } -- Build targets.
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String
@@ -68,18 +71,22 @@ instance ToJSON Aliases where
 instance FromJSON HenHenConfig where
     parseJSON = withObject "HenHenConfig" $ \obj -> HenHenConfig
         <$> (obj .:? "name")
+        <*> optional mempty (obj .:? "source-files")
+        <*> optional mempty (obj .:? "data-files")
+        <*> (obj .:? "source-folder")
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "fetch")
-        <*> (obj .:? "source-folder")
         <*> (obj .:? "aliases")
         <*> fmap getTargetMap (optional mempty (obj .:? "targets"))
 
 instance ToJSON HenHenConfig where
     toJSON config = object
         [ "name"          .= configName config
+        , "source-files"  .= configSources config
+        , "data-files"    .= configDataFiles config
+        , "source-folder" .= configSourceDir config
         , "dependencies"  .= configDeps config
         , "fetch"         .= configFetch config
-        , "source-folder" .= configSrcDir config
         , "aliases"       .= configAliases config 
         , "targets"       .= HashMap.elems (configTargets config) ]
 
@@ -89,11 +96,13 @@ instance ToJSON HenHenConfig where
 configFieldOrderMap :: HashMap Text Int
 configFieldOrderMap = HashMap.fromList
     [ ("name"          , 1)
-    , ("dependencies"  , 2)
-    , ("fetch"         , 3)
+    , ("source-files"  , 2)
+    , ("data-files"    , 3)
     , ("source-folder" , 4)
-    , ("aliases"       , 5)
-    , ("targets"       , 6) ]
+    , ("dependencies"  , 5)
+    , ("fetch"         , 6)
+    , ("aliases"       , 7)
+    , ("targets"       , 8) ]
 
 configFieldOrder :: Text -> Text -> Ordering
 configFieldOrder = compare `on` (`HashMap.lookup` configFieldOrderMap)
@@ -122,4 +131,4 @@ getUninstaller :: HenHenConfig -> String
 getUninstaller = getAlias "chicken-uninstall" uninstallerAlias
 
 getSourcePath :: HenHenConfig -> FilePath -> FilePath
-getSourcePath = maybe id ((</>) . normalise) . configSrcDir
+getSourcePath = maybe id ((</>) . normalise) . configSourceDir
