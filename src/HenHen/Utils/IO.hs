@@ -5,6 +5,7 @@ module HenHen.Utils.IO
 , fileLink
 , EntryType(..)
 , exists
+, createDirectory
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -18,6 +19,7 @@ import System.Directory
     , doesFileExist
     , doesDirectoryExist
     , doesPathExist
+    , createDirectoryIfMissing
     )
 import Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 
@@ -65,4 +67,11 @@ exists entry path = (liftIO >=> liftEither) $ do
             Directory -> doesDirectoryExist
     check path `catch` \err -> do
         let message = fileError "couldnt't check existence" path err
+        return $ Left message
+
+createDirectory :: Bool -> FilePath -> Packager ()
+createDirectory recursive path = (liftIO >=> liftEither) $ do
+    let create = fmap Right . createDirectoryIfMissing recursive
+    create path `catch` \err -> do
+        let message = fileError "couldn't create directory" path err
         return $ Left message
