@@ -7,6 +7,7 @@ module HenHen.Utils.IO
 , exists
 , createDirectory
 , globFiles
+, copyFileSafe
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -21,6 +22,7 @@ import System.Directory
     , doesDirectoryExist
     , doesPathExist
     , createDirectoryIfMissing
+    , copyFile
     )
 import System.FilePattern.Directory
     ( FilePattern
@@ -86,4 +88,11 @@ globFiles path patterns = (liftIO >=> liftEither) $ do
     let glob = (fmap Right .) . getDirectoryFiles
     glob path patterns `catch` \err -> do
         let message = fileError "couldn't glob files in path" path err
+        return $ Left message
+
+copyFileSafe :: FilePath -> FilePath -> Packager ()
+copyFileSafe input output = (liftIO >=> liftEither) $ do
+    let copy = (fmap Right .) . copyFile
+    copy input output `catch` \err -> do
+        let message = fileError "couldn't copy file" input err
         return $ Left message
