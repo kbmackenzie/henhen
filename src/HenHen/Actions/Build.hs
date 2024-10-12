@@ -5,7 +5,6 @@ module HenHen.Actions.Build
 import HenHen.Config
     ( HenHenConfig(..)
     , getCompiler
-    , getSourcePath
     , Target(..)
     , Meta(..)
     , MetaKey(..)
@@ -18,13 +17,14 @@ import HenHen.Config
     )
 import HenHen.Environment
     ( Environment
-    , localChicken
+    , localBuild
+    , localChickenBin
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
 import HenHen.Utils.FilePath (toExecutablePath)
-import System.FilePath ((</>), normalise, addExtension)
-import System.Directory (createFileLink, createDirectoryIfMissing)
+import System.FilePath ((</>), addExtension)
+import System.Directory (createFileLink)
 import Data.Maybe (fromMaybe)
 import HenHen.Packager (Packager, throwError)
 import Data.HashSet (HashSet)
@@ -44,9 +44,10 @@ getUses = concatMap $ ("-uses" :) . singleton . getKey
 buildSource :: Bool -> GenerateTask SourceOptions
 buildSource isModule config meta options = do
     let targetMap = configTargets config
+    let buildPath = localBuild </> fromMaybe mempty (configSourceDir config)
 
-    let name = (getKey . metaKey) meta
-    let source = getSourcePath config $ fromMaybe (addExtension name "scm") (sourcePath options)
+    let name   = (getKey . metaKey) meta
+    let source = fromMaybe (addExtension name "scm") (sourcePath options)
 
     let output = "." </> if isModule
         then addExtension name "o"
@@ -75,7 +76,7 @@ buildSource isModule config meta options = do
     EnvironmentTask
         { taskCommand     = compiler
         , taskArguments   = arguments
-        , taskDirectory   = Nothing
+        , taskDirectory   = Just buildPath
         , taskErrorReport = Just . buildFail $ "module " ++ show name
         , afterTask       = Nothing }
 
@@ -96,10 +97,10 @@ buildBinary config meta options = do
     let after :: IO ()
         after = do
             -- Create symlink in '.chicken/bin'!
-            let binary  = (getKey . metaKey) meta -- todo: on windows, add '.exe' extension.
-            let binPath = localChicken </> "bin"
-            createDirectoryIfMissing True binPath
-            createFileLink binary (binPath </> binary)
+            let binary = toExecutablePath . getKey . metaKey $ meta
+            let inputPath  = localBuild </> binary
+            let outputPath = localChickenBin </> binary
+            createFileLink inputPath outputPath
     task { afterTask = Just after }
 
 buildFail :: String -> String -> String
