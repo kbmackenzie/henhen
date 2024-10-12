@@ -15,7 +15,6 @@ module HenHen.Config
 , getTargetMeta
 , getTargetKey
 , getTargetMap
-, isModuleTarget
 ) where
 
 import HenHen.Config.Type
@@ -37,5 +36,4 @@ import HenHen.Config.Target
     , getTargetMeta
     , getTargetKey
     , getTargetMap
-    , isModuleTarget
     )

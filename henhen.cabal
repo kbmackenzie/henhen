@@ -25,11 +25,7 @@ source-repository head
 library
   exposed-modules:
       HenHen.Actions.Build
-      HenHen.Actions.Clean
       HenHen.Actions.Prepare
-      HenHen.Cache.Manage
-      HenHen.Cache.Type
-      HenHen.Cache.Visit
       HenHen.Config
       HenHen.Config.Target
       HenHen.Config.Type

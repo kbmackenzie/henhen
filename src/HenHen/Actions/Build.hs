@@ -13,7 +13,6 @@ import HenHen.Config
     , getInstaller
     , getTargetMeta
     , getTargetKey
-    , isModuleTarget
     )
 import HenHen.Environment
     ( Environment
@@ -31,54 +30,35 @@ import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (foldM, foldM_)
-import Data.List (singleton)
 
 type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
 
-getObjects :: [MetaKey] -> [FilePath]
-getObjects = map $ (`addExtension` "o") . getKey
-
-getUses :: [MetaKey] -> [String]
-getUses = concatMap $ ("-uses" :) . singleton . getKey
-
-buildSource :: Bool -> GenerateTask SourceOptions
-buildSource isModule config meta options = do
-    let targetMap = configTargets config
-    let buildPath = localBuild </> fromMaybe mempty (configSourceDir config)
-
+buildBinary :: GenerateTask SourceOptions
+buildBinary config meta options = do
     let name   = (getKey . metaKey) meta
     let source = fromMaybe (addExtension name "scm") (sourcePath options)
-
-    let output = "." </> if isModule
-        then addExtension name "o"
-        else toExecutablePath name
-
-    let filterModules :: [MetaKey] -> [MetaKey]
-        filterModules = filter $ maybe False isModuleTarget . (`HashMap.lookup` targetMap)
+    let binary = toExecutablePath name
 
     let coreFlags = ["-static", "-setup-mode", "-O2"]
-    let dependencies = filterModules (metaDeps meta)
-
-    let arguments = if isModule
-        then concat
-            [ ["-c", "-J", "-regenerate-import-libraries", "-M"]
-            , ["-unit", name, "-o", output, source]
-            , coreFlags
-            , metaOptions meta ]
-        else concat
-            [ ["-o", output, source]
-            , getObjects dependencies
-            , getUses dependencies
+    let arguments = concat
+            [ ["-o", binary, source]
             , coreFlags
             , metaOptions meta ] 
+
+    let after :: Packager ()
+        after = do
+            -- Create symlink in '.chicken/bin'!
+            let from = localBuild </> binary
+            let to   = localChickenBin </> binary
+            fileLink from to
 
     let compiler = getCompiler config
     EnvironmentTask
         { taskCommand     = compiler
         , taskArguments   = arguments
-        , taskDirectory   = Just buildPath
+        , taskDirectory   = Just localBuild
         , taskErrorReport = Just . buildFail $ "module " ++ show name
-        , afterTask       = Nothing }
+        , afterTask       = Just after }
 
 buildEgg :: GenerateTask EggOptions
 buildEgg config meta options = do
@@ -92,25 +72,12 @@ buildEgg config meta options = do
         , taskErrorReport = Just . buildFail $ "egg " ++ show name
         , afterTask       = Nothing }
 
-buildBinary :: GenerateTask SourceOptions
-buildBinary config meta options = do
-    let task = buildSource True config meta options
-    let after :: Packager ()
-        after = do
-            -- Create symlink in '.chicken/bin'!
-            let binary = toExecutablePath . getKey . metaKey $ meta
-            let inputPath  = localBuild </> binary
-            let outputPath = localChickenBin </> binary
-            fileLink inputPath outputPath
-    task { afterTask = Just after }
-
 buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
 buildTarget :: HenHenConfig -> Target -> EnvironmentTask
 buildTarget config target = case target of
-    (Module meta options)     -> buildSource True config meta options
     (Egg meta options)        -> buildEgg config meta options
     (Executable meta options) -> buildBinary config meta options
 

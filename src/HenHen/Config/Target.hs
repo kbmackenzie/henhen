@@ -6,12 +6,11 @@ module HenHen.Config.Target
 ( Target(..)
 , Meta(..)
 , MetaKey(..)
-, SourceOptions(..)
 , EggOptions(..)
+, SourceOptions(..)
 , getTargetMeta
 , getTargetKey
 , getTargetMap
-, isModuleTarget
 ) where
 
 import Data.Aeson
@@ -43,8 +42,7 @@ newtype MetaKey = MetaKey { getKey :: String }
     deriving (Eq, Ord, Hashable)
 
 data Target =
-      Module     Meta SourceOptions
-    | Egg        Meta EggOptions
+      Egg        Meta EggOptions
     | Executable Meta SourceOptions
 
 newtype SourceOptions = SourceOptions
@@ -57,8 +55,7 @@ newtype EggOptions = EggOptions
 -- Utilities:
 ------------------------------------
 getTargetMeta :: Target -> Meta
-getTargetMeta (Module meta _) = meta
-getTargetMeta (Egg meta _) = meta
+getTargetMeta (Egg meta _)        = meta
 getTargetMeta (Executable meta _) = meta
 
 getTargetKey :: Target -> MetaKey
@@ -67,10 +64,6 @@ getTargetKey = metaKey . getTargetMeta
 getTargetMap :: [Target] -> HashMap MetaKey Target
 getTargetMap = HashMap.fromList . map toPair
     where toPair target = (getTargetKey target, target)
-
-isModuleTarget :: Target -> Bool
-isModuleTarget (Module _ _) = True
-isModuleTarget _ = False
 
 ------------------------------------
 -- JSON/YAML parsing:
@@ -103,7 +96,6 @@ instance FromJSON Target where
         meta <- parseMeta obj
         tag  <- (obj .: "type") :: Parser String
         case map toLower tag of
-            "module"     -> Module     meta <$> parseSource obj
             "egg"        -> Egg        meta <$> parseEgg obj
             "executable" -> Executable meta <$> parseSource obj
             _            -> fail $ "unrecognized target tag: " ++ show tag
@@ -116,12 +108,9 @@ serializeMeta meta =
     , "extra-options" .= metaOptions meta ]
 
 instance ToJSON Target where
-    toJSON (Module meta options) = object $ serializeMeta meta ++
-        [ "tag"       .= ("module" :: String)
-        , "source"    .= sourcePath options ]
     toJSON (Egg meta options) = object $ serializeMeta meta ++
         [ "tag"       .= ("egg" :: String)
         , "directory" .= eggDirectory options ]
     toJSON (Executable meta options) = object $ serializeMeta meta ++
         [ "tag"       .= ("executable" :: String)
-        , "source"    .= sourcePath options ]
+        , "source"    .= sourcePath options   ]
