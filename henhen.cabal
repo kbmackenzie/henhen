@@ -29,6 +29,7 @@ library
       HenHen.Actions.Interpret
       HenHen.Actions.Prepare
       HenHen.Actions.Run
+      HenHen.Actions.Type
       HenHen.Cache.Type
       HenHen.Config
       HenHen.Config.Target
