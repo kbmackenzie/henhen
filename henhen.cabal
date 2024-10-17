@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       HenHen.Actions.Build
+      HenHen.Actions.Fetch
       HenHen.Actions.Prepare
       HenHen.Config
       HenHen.Config.Target
