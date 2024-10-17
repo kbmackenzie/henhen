@@ -4,7 +4,7 @@ module HenHen.Actions.Fetch
 ) where
 
 import HenHen.Environment (localDependencies, EnvironmentTask(..))
-import HenHen.Config (HenHenConfig(..))
+import HenHen.Config (HenHenConfig(..), getInstaller)
 import System.FilePath ((</>))
 import qualified Data.HashMap.Strict as HashMap
 
@@ -23,30 +23,32 @@ fetchRepository name url = do
         , taskErrorReport = Just failMessage
         , afterTask       = Nothing }
 
-installEgg :: FilePath -> EnvironmentTask
-installEgg path = do
+installEgg :: HenHenConfig -> FilePath -> EnvironmentTask
+installEgg config path = do
     let failMessage :: String -> String
         failMessage message = concat [ "Couldn't install egg ", show path, ": ", message ]
+    let installer = getInstaller config
 
     EnvironmentTask
-        { taskCommand     = "chicken-install"
+        { taskCommand     = installer
         , taskArguments   = []
         , taskDirectory   = Nothing
         , taskErrorReport = Just failMessage
         , afterTask       = Nothing }
 
-fetchEgg :: String -> URL -> [EnvironmentTask]
-fetchEgg name url = do
+fetchEgg :: HenHenConfig -> String -> URL -> [EnvironmentTask]
+fetchEgg config name url = do
     let directory = localDependencies </> name
-    [fetchRepository name url, installEgg directory]
+    [fetchRepository name url, installEgg config directory]
 
-normalEgg :: String -> EnvironmentTask
-normalEgg name = do
+normalEgg :: HenHenConfig -> String -> EnvironmentTask
+normalEgg config name = do
     let failMessage :: String -> String
         failMessage message = concat ["Couldn't install egg ", show name, ": ", message]
+    let installer = getInstaller config
 
     EnvironmentTask
-        { taskCommand     = "chicken-install"
+        { taskCommand     = installer
         , taskArguments   = [name]
         , taskDirectory   = Nothing
         , taskErrorReport = Just failMessage
@@ -56,5 +58,5 @@ fetch :: HenHenConfig -> String -> [EnvironmentTask]
 fetch config name = do
     let maybeUrl = HashMap.lookup name (configFetch config)
     case maybeUrl of
-        (Just url) -> fetchEgg name url
-        Nothing    -> return (normalEgg name)
+        (Just url) -> fetchEgg config name url
+        Nothing    -> return (normalEgg config name)
