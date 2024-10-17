@@ -26,6 +26,7 @@ library
   exposed-modules:
       HenHen.Actions.Build
       HenHen.Actions.Fetch
+      HenHen.Actions.Interpret
       HenHen.Actions.Prepare
       HenHen.Config
       HenHen.Config.Target
