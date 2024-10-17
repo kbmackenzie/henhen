@@ -8,6 +8,7 @@ module HenHen.Utils.IO
 , createDirectory
 , globFiles
 , copyFileSafe
+, removeDirectory
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
@@ -23,6 +24,7 @@ import System.Directory
     , doesPathExist
     , createDirectoryIfMissing
     , copyFile
+    , removeDirectoryRecursive
     )
 import System.FilePattern.Directory
     ( FilePattern
@@ -95,4 +97,11 @@ copyFileSafe input output = (liftIO >=> liftEither) $ do
     let copy = (fmap Right .) . copyFile
     copy input output `catch` \err -> do
         let message = fileError "couldn't copy file" input err
+        return $ Left message
+
+removeDirectory :: FilePath -> Packager ()
+removeDirectory path = (liftIO >=> liftEither) $ do
+    let rm = fmap Right . removeDirectoryRecursive
+    rm path `catch` \err -> do
+        let message = fileError "couldn't remove directory" path err
         return $ Left message
