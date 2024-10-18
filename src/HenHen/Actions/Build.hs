@@ -26,8 +26,8 @@ import HenHen.Environment
 import HenHen.Utils.FilePath (toExecutablePath)
 import HenHen.Utils.IO (fileLink)
 import System.FilePath ((</>), addExtension)
-import Data.Maybe (fromMaybe)
-import HenHen.Packager (Packager, throwError)
+import Data.Maybe (fromMaybe, mapMaybe)
+import HenHen.Packager (Packager)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
@@ -49,7 +49,7 @@ buildBinary config meta options = do
 
     let after :: Packager ()
         after = do
-            -- Create symlink in '.chicken/bin'!
+            -- Create symlink in '<local-chicken>/bin'!
             let from = localBuild </> binary
             let to   = localChickenBin </> binary
             fileLink from to
@@ -87,23 +87,20 @@ buildAll' :: HenHenConfig -> Environment -> [MetaKey] -> Packager ()
 buildAll' config env skip = do
     let targetMap = configTargets config
 
-    let getTarget :: MetaKey -> Packager Target
-        getTarget key = case HashMap.lookup key targetMap of
-            (Just target) -> return target
-            Nothing       -> throwError ("Target doesn't exist: " ++ (show . getKey) key)
-
-    let getDependencies :: Target -> Packager [Target]
+    let getDependencies :: Target -> [Target]
         getDependencies target = do
+            -- Note: Dependencies that aren't targets are handled elsewhere.
+            -- Because of this, we simply ignore them here.
             let keys = (metaDeps . getTargetMeta) target
-            mapM getTarget keys
+            mapMaybe (`HashMap.lookup` targetMap) keys
 
     let deepBuild :: HashSet MetaKey -> Target -> Packager (HashSet MetaKey)
         deepBuild visited target = do
             let self = getTargetKey target
             if HashSet.member self visited then return visited else do
-                -- Build all dependencies recursively, in order, storing the new 'visited' set:
+                -- Build all dependencies recursively, in order, storing the new 'visited' set.
                 let visitedSelf = HashSet.insert self visited
-                let buildDependencies = foldM deepBuild visitedSelf =<< getDependencies target
+                let buildDependencies = foldM deepBuild visitedSelf (getDependencies target)
 
                 visitedDependencies <- buildDependencies
                 runEnvironmentTask env (build config target)
