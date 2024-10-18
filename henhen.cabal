@@ -31,9 +31,11 @@ library
       HenHen.Actions.Prepare
       HenHen.Actions.Run
       HenHen.Actions.Type
+      HenHen.Cache
       HenHen.Cache.Manage
       HenHen.Cache.Type
       HenHen.Config
+      HenHen.Config.Manage
       HenHen.Config.Target
       HenHen.Config.Type
       HenHen.Environment
