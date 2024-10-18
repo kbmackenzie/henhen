@@ -24,6 +24,7 @@ source-repository head
 
 library
   exposed-modules:
+      HenHen
       HenHen.Actions
       HenHen.Actions.Build
       HenHen.Actions.Clean
