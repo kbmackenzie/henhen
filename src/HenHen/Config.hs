@@ -15,6 +15,9 @@ module HenHen.Config
 , getTargetMeta
 , getTargetKey
 , getTargetMap
+, configPath
+, readConfig
+, writeConfig
 ) where
 
 import HenHen.Config.Type
@@ -36,4 +39,9 @@ import HenHen.Config.Target
     , getTargetMeta
     , getTargetKey
     , getTargetMap
+    )
+import HenHen.Config.Manage
+    ( configPath
+    , readConfig
+    , writeConfig
     )
