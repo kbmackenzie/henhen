@@ -24,17 +24,20 @@ source-repository head
 
 library
   exposed-modules:
+      HenHen.Actions
       HenHen.Actions.Build
-      HenHen.Actions.Fetch
+      HenHen.Actions.Clean
       HenHen.Actions.Interpret
       HenHen.Actions.Prepare
       HenHen.Actions.Run
       HenHen.Actions.Type
+      HenHen.Cache.Manage
       HenHen.Cache.Type
       HenHen.Config
       HenHen.Config.Target
       HenHen.Config.Type
       HenHen.Environment
+      HenHen.Environment.Fetch
       HenHen.Environment.Folders
       HenHen.Environment.Task
       HenHen.Environment.Type
