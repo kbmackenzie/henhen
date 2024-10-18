@@ -44,7 +44,7 @@ library:
   source-dirs: src
 
 executables:
-  henhen-exe:
+  henhen:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
