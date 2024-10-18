@@ -1,5 +1,6 @@
 module HenHen
-( henhen
+( Action(..)
+, henhen
 ) where
 
 import HenHen.Packager (package)
