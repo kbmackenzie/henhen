@@ -42,6 +42,14 @@ ghc-options:
 
 library:
   source-dirs: src
+  exposed-modules:
+  - HenHen
+  - HenHen.Actions
+  - HenHen.Cache
+  - HenHen.Config
+  - HenHen.Environment
+  - HenHen.Packager
+  generated-other-modules: Paths_henhen
 
 executables:
   henhen:

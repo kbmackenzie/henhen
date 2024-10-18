@@ -26,25 +26,26 @@ library
   exposed-modules:
       HenHen
       HenHen.Actions
+      HenHen.Cache
+      HenHen.Config
+      HenHen.Environment
+      HenHen.Packager
+  other-modules:
       HenHen.Actions.Build
       HenHen.Actions.Clean
       HenHen.Actions.Interpret
       HenHen.Actions.Prepare
       HenHen.Actions.Run
       HenHen.Actions.Type
-      HenHen.Cache
       HenHen.Cache.Manage
       HenHen.Cache.Type
-      HenHen.Config
       HenHen.Config.Manage
       HenHen.Config.Target
       HenHen.Config.Type
-      HenHen.Environment
       HenHen.Environment.Fetch
       HenHen.Environment.Folders
       HenHen.Environment.Task
       HenHen.Environment.Type
-      HenHen.Packager
       HenHen.Utils.FilePath
       HenHen.Utils.IO
       HenHen.Utils.Json
@@ -52,7 +53,6 @@ library
       HenHen.Utils.String
       HenHen.Utils.Time
       HenHen.Utils.Yaml
-  other-modules:
       Paths_henhen
   autogen-modules:
       Paths_henhen
