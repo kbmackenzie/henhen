@@ -36,8 +36,8 @@ createCache files = do
     let checkFile :: FilePath -> Packager (FilePath, Integer)
         checkFile file = (file,) <$> getFileModTime file
 
-    buildTime_ <- getPosixTimeInSeconds
-    targetMap_ <- HashMap.fromList <$> mapM checkFile files
+    timestamp    <- getPosixTimeInSeconds
+    dependencies <- HashMap.fromList <$> mapM checkFile files
     return CacheInfo
-        { buildTime = buildTime_
-        , targetMap = targetMap_ }
+        { buildTime     = timestamp
+        , dependencyMap = dependencies }
