@@ -18,6 +18,7 @@ module HenHen.Config
 , configPath
 , readConfig
 , writeConfig
+, hasConfig
 ) where
 
 import HenHen.Config.Type
@@ -44,4 +45,5 @@ import HenHen.Config.Manage
     ( configPath
     , readConfig
     , writeConfig
+    , hasConfig
     )
