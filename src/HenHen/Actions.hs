@@ -3,8 +3,8 @@ module HenHen.Actions
 , runAction
 ) where
 
-import HenHen.Config (HenHenConfig(..))
-import HenHen.Packager (Packager)
+import HenHen.Config (readConfig, hasConfig)
+import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment, runEnvironmentTask)
 import HenHen.Actions.Build (buildAll)
 import HenHen.Actions.Clean (clean, purge)
@@ -13,11 +13,16 @@ import HenHen.Actions.Run (run)
 import HenHen.Actions.Prepare (prepare)
 import HenHen.Actions.Type (Action(..))
 
-runAction :: HenHenConfig -> Action -> Packager ()
-runAction _      (Clean p) = if p then purge else clean
-runAction config action = do
-    prepare config
-    env <- createEnvironment config
+runAction :: Action -> Packager ()
+runAction (Clean shouldPurge) = do
+    isHenHen <- hasConfig
+    if isHenHen
+        then (if shouldPurge then purge else clean)
+        else throwError "Cannot clean directory: No config file found, possible mistake?"
+runAction action = do
+    config <- readConfig
+    env    <- createEnvironment config
+    prepare config env
     case action of
         Build -> do
             buildAll config env
