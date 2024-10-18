@@ -13,18 +13,18 @@ import Data.Aeson
     , (.:)
     , (.=)
     )
-import Data.HashMap.Strict (HashMap)
+import Data.HashSet (HashSet)
 
 data CacheInfo = CacheInfo
     { buildTime     :: Integer
-    , dependencyMap :: HashMap String Integer }
+    , dependencySet :: HashSet String }
 
 instance FromJSON CacheInfo where
     parseJSON = withObject "CacheInfo" $ \obj -> CacheInfo
-        <$> (obj .: "build-time")
-        <*> (obj .: "dependency-map")
+        <$> (obj .: "build-time"    )
+        <*> (obj .: "dependency-set")
 
 instance ToJSON CacheInfo where
     toJSON cache = object
         [ "build-time"     .= buildTime cache
-        , "dependency-map" .= dependencyMap cache ]
+        , "dependency-set" .= dependencySet cache ]
