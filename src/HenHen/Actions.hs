@@ -7,13 +7,19 @@ import HenHen.Config (readConfig, hasConfig)
 import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment, runEnvironmentTask)
 import HenHen.Actions.Build (buildAll)
-import HenHen.Actions.Clean (clean, purge)
-import HenHen.Actions.Interpret (interpret)
 import HenHen.Actions.Run (run)
 import HenHen.Actions.Prepare (prepare)
+import HenHen.Actions.Clean (clean, purge)
+import HenHen.Actions.Init (initialize)
+import HenHen.Actions.Interpret (interpret)
 import HenHen.Actions.Type (Action(..))
 
 runAction :: Action -> Packager ()
+runAction (Init name) = do
+    isHenHen <- hasConfig
+    if isHenHen
+        then throwError "There's already a project in the current directory!"
+        else initialize name
 runAction (Clean shouldPurge) = do
     isHenHen <- hasConfig
     if isHenHen
