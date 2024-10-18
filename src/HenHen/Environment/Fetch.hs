@@ -1,9 +1,10 @@
-module HenHen.Actions.Fetch
+module HenHen.Environment.Fetch
 ( URL
 , fetch
 ) where
 
-import HenHen.Environment (localDependencies, EnvironmentTask(..))
+import HenHen.Environment.Folders(localDependencies)
+import HenHen.Environment.Task (EnvironmentTask(..))
 import HenHen.Config (HenHenConfig(..), getInstaller)
 import System.FilePath ((</>))
 import qualified Data.HashMap.Strict as HashMap
