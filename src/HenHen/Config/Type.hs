@@ -39,6 +39,7 @@ data HenHenConfig = HenHenConfig
     , configSourceDir :: Maybe FilePath           -- Source root.
     , configDeps      :: HashSet String           -- Project dependencies.
     , configFetch     :: HashMap String String    -- From where to fetch custom dependencies.
+    , configScripts   :: HashMap String String    -- Config scripts.
     , configAliases   :: Maybe Aliases            -- Aliases for CHICKEN Scheme binaries.
     , configTargets   :: HashMap MetaKey Target } -- Build targets.
 
@@ -76,6 +77,7 @@ instance FromJSON HenHenConfig where
         <*> (obj .:? "source-folder")
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "fetch")
+        <*> optional mempty (obj .:? "scripts")
         <*> (obj .:? "aliases")
         <*> fmap getTargetMap (optional mempty (obj .:? "targets"))
 
@@ -87,6 +89,7 @@ instance ToJSON HenHenConfig where
         , "source-folder" .= configSourceDir config
         , "dependencies"  .= configDeps config
         , "fetch"         .= configFetch config
+        , "scripts"       .= configScripts config
         , "aliases"       .= configAliases config 
         , "targets"       .= HashMap.elems (configTargets config) ]
 
@@ -101,8 +104,9 @@ configFieldOrderMap = HashMap.fromList
     , ("source-folder" , 4)
     , ("dependencies"  , 5)
     , ("fetch"         , 6)
-    , ("aliases"       , 7)
-    , ("targets"       , 8) ]
+    , ("scripts"       , 7)
+    , ("aliases"       , 8)
+    , ("targets"       , 9) ]
 
 configFieldOrder :: Text -> Text -> Ordering
 configFieldOrder = compare `on` (`HashMap.lookup` configFieldOrderMap)
