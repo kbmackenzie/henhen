@@ -4,7 +4,6 @@ module HenHen.Actions.Prepare
 
 import HenHen.Config
     ( HenHenConfig(..)
-    , Target(..)
     , Meta(..)
     , MetaKey(..)
     , getTargetMeta
