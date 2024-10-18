@@ -7,6 +7,7 @@ module HenHen.Environment
 , localDependencies
 , EnvironmentTask(..)
 , runEnvironmentTask
+, fetch
 ) where
 
 import HenHen.Environment.Folders
@@ -17,3 +18,4 @@ import HenHen.Environment.Folders
     )
 import HenHen.Environment.Type (Environment, createEnvironment)
 import HenHen.Environment.Task (EnvironmentTask(..), runEnvironmentTask)
+import HenHen.Environment.Fetch (fetch)
