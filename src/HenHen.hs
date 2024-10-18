@@ -4,7 +4,6 @@ module HenHen
 
 import HenHen.Packager (package)
 import HenHen.Actions (Action(..), runAction)
-import Control.Monad.IO.Class (MonadIO(..))
 
-henhen :: (MonadIO m) => Action -> m (Either String ())
-henhen = liftIO . package . runAction
+henhen :: Action -> IO (Either String ())
+henhen = package . runAction
