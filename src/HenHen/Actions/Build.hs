@@ -1,6 +1,5 @@
 module HenHen.Actions.Build
 ( build
-, buildAll'
 , buildAll
 ) where
 
@@ -83,8 +82,8 @@ build config target = case target of
     (Egg meta options)        -> buildEgg config meta options
     (Executable meta options) -> buildBinary config meta options
 
-buildAll' :: HenHenConfig -> Environment -> [MetaKey] -> Packager ()
-buildAll' config env skip = do
+buildAll :: HenHenConfig -> Environment -> Packager ()
+buildAll config env = do
     let targetMap = configTargets config
 
     let getDependencies :: Target -> [Target]
@@ -106,8 +105,4 @@ buildAll' config env skip = do
                 runEnvironmentTask env (build config target)
                 return visitedDependencies
 
-    let skipSet = HashSet.fromList skip
-    foldM_ deepBuild skipSet $ configTargets config
-
-buildAll :: HenHenConfig -> Environment -> Packager ()
-buildAll config env = buildAll' config env []
+    foldM_ deepBuild mempty $ configTargets config
