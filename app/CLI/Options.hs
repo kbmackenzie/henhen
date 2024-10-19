@@ -70,5 +70,4 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, clea
 getAction :: IO Action
 getAction = execParser $ info (parseAction <**> helper)
     ( fullDesc
-   <> progDesc ""
    <> header "henhen - a build tool for CHICKEN Scheme" )

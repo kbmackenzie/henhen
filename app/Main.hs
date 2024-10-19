@@ -1,4 +1,6 @@
 module Main (main) where
 
+import CLI.Run (run)
+
 main :: IO ()
-main = putStrLn "todo"
+main = run
