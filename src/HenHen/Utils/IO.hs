@@ -16,6 +16,7 @@ import Data.ByteString (ByteString)
 import Control.Exception (catch, IOException)
 import Control.Monad ((>=>))
 import qualified Data.ByteString as ByteString
+import System.FilePath ((</>))
 import System.Directory
     ( getModificationTime
     , createFileLink
@@ -87,7 +88,8 @@ createDirectory recursive path = (liftIO >=> liftEither) $ do
 
 globFiles :: FilePath -> [FilePattern] -> Packager [FilePath]
 globFiles path patterns = (liftIO >=> liftEither) $ do
-    let glob = (fmap Right .) . getDirectoryFiles
+    let root = (path </>)
+    let glob = (fmap (Right . map root) .) . getDirectoryFiles
     glob path patterns `catch` \err -> do
         let message = fileError "couldn't glob files in path" path err
         return $ Left message
