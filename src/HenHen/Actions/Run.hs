@@ -15,15 +15,15 @@ import System.FilePath ((</>))
 import System.Process.Typed (shell, setEnv, ExitCode(..), runProcess)
 import qualified Data.HashMap.Strict as HashMap
 
-runBinary :: String -> EnvironmentTask
-runBinary name = do
+runBinary :: String -> [String] -> EnvironmentTask
+runBinary name args = do
     let bin = localChickenBin </> toExecutablePath name
     let failMessage :: String -> String
         failMessage message = concat ["Failure when running target ", show name, ": ", message]
 
     EnvironmentTask
         { taskCommand     = bin
-        , taskArguments   = []
+        , taskArguments   = args
         , taskDirectory   = Nothing
         , taskErrorReport = Just failMessage
         , afterTask       = Nothing }
@@ -36,9 +36,9 @@ runScript env name line = do
         ExitSuccess     -> return ()
         (ExitFailure n) -> throwError . concat $ ["Script ", show name, " exited with code ", show n, "!"]
 
-run :: HenHenConfig -> Environment -> String -> Packager ()
-run config env name = do
+run :: HenHenConfig -> Environment -> String -> [String] -> Packager ()
+run config env name args = do
     let script = HashMap.lookup name (configScripts config)
     case script of
         (Just line) -> runScript env name line
-        Nothing     -> runEnvironmentTask env (runBinary name)
+        Nothing     -> runEnvironmentTask env (runBinary name args)

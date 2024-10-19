@@ -32,9 +32,9 @@ runAction action = do
     case action of
         Build -> do
             buildAll config env
-        (Run name) -> do
+        (Run name args) -> do
             buildAll config env
-            run config env name
+            run config env name args
         (Interpret source) -> do
             buildAll config env
             runEnvironmentTask env (interpret config source)
