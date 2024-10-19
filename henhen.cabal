@@ -33,6 +33,8 @@ library
   other-modules:
       HenHen.Actions.Build
       HenHen.Actions.Clean
+      HenHen.Actions.Init
+      HenHen.Actions.Install
       HenHen.Actions.Interpret
       HenHen.Actions.Prepare
       HenHen.Actions.Run
@@ -81,12 +83,13 @@ library
 executable henhen
   main-is: Main.hs
   other-modules:
+      CLI.Options
       Paths_henhen
   autogen-modules:
       Paths_henhen
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -static
   build-depends:
       aeson >=2.1.2.1 && <2.2
     , ansi-terminal >=0.11.5 && <0.12
