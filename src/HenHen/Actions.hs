@@ -21,7 +21,9 @@ runAction (Init name) = do
     if isHenHen
         then throwError "There's already a project in the current directory!"
         else initialize name
-runAction (Install name) = install name
+runAction (Install name) = do
+    install name
+    runAction Build
 runAction (Clean shouldPurge) = do
     isHenHen <- hasConfig
     if isHenHen
