@@ -40,7 +40,7 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, clea
         run :: Mod CommandFields Action
         run = command "run" $ makeInfo parser "Run binary or script in virtual environment"
             where parser = Run
-                    <$> argument str (metavar "COMMAND")
+                    <$> argument str (metavar "NAME")
                     <*> many (argument str (metavar "ARG"))
 
         init_ :: Mod CommandFields Action
