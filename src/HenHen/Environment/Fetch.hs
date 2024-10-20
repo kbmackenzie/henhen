@@ -3,7 +3,7 @@ module HenHen.Environment.Fetch
 , fetch
 ) where
 
-import HenHen.Environment.Folders(localDependencies)
+import HenHen.Environment.Folders (localDependencies)
 import HenHen.Environment.Task (EnvironmentTask(..))
 import HenHen.Config (HenHenConfig(..), getInstaller)
 import System.FilePath ((</>))
@@ -24,29 +24,29 @@ fetchRepository name url = do
         , taskErrorReport = Just failMessage
         , afterTask       = Nothing }
 
-installEgg :: HenHenConfig -> FilePath -> EnvironmentTask
-installEgg config path = do
-    let failMessage :: String -> String
-        failMessage message = concat [ "Couldn't install egg ", show path, ": ", message ]
+installEgg :: HenHenConfig -> String -> EnvironmentTask
+installEgg config name = do
     let installer = getInstaller config
+    let directory = localDependencies </> name
+
+    let failMessage :: String -> String
+        failMessage message = concat [ "Couldn't install egg ", show name, ": ", message ]
 
     EnvironmentTask
         { taskCommand     = installer
         , taskArguments   = []
-        , taskDirectory   = Nothing
+        , taskDirectory   = Just directory
         , taskErrorReport = Just failMessage
         , afterTask       = Nothing }
 
 fetchEgg :: HenHenConfig -> String -> URL -> [EnvironmentTask]
-fetchEgg config name url = do
-    let directory = localDependencies </> name
-    [fetchRepository name url, installEgg config directory]
+fetchEgg config name url = [fetchRepository name url, installEgg config name]
 
 normalEgg :: HenHenConfig -> String -> EnvironmentTask
 normalEgg config name = do
+    let installer = getInstaller config
     let failMessage :: String -> String
         failMessage message = concat ["Couldn't install egg ", show name, ": ", message]
-    let installer = getInstaller config
 
     EnvironmentTask
         { taskCommand     = installer
