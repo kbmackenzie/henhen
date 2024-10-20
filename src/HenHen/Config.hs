@@ -9,7 +9,7 @@ module HenHen.Config
 , getSourcePath
 , Target(..)
 , Meta(..)
-, MetaKey(..)
+, TargetKey(..)
 , SourceOptions(..)
 , EggOptions(..)
 , getTargetMeta
@@ -33,7 +33,7 @@ import HenHen.Config.Type
 import HenHen.Config.Target
     ( Target(..)
     , Meta(..)
-    , MetaKey(..)
+    , TargetKey(..)
     , SourceOptions(..)
     , EggOptions(..)
     , getTargetMeta

@@ -5,7 +5,7 @@ module HenHen.Actions.Prepare
 import HenHen.Config
     ( HenHenConfig(..)
     , Meta(..)
-    , MetaKey(..)
+    , TargetKey(..)
     , getTargetMeta
     , configPath
     )
@@ -31,7 +31,7 @@ import Control.Monad (when, unless)
 gatherDependencies :: HenHenConfig -> HashSet String
 gatherDependencies config = do
     let topLevel = configDeps config
-    let isTarget :: MetaKey -> Bool
+    let isTarget :: TargetKey -> Bool
         isTarget = flip HashMap.member (configTargets config)
 
     let targets    = HashMap.elems (configTargets config)

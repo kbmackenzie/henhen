@@ -10,7 +10,7 @@ import HenHen.Config
     , getCompiler
     , Target(..)
     , Meta(..)
-    , MetaKey(..)
+    , TargetKey(..)
     , SourceOptions(..)
     , EggOptions(..)
     , getInstaller
@@ -33,7 +33,7 @@ import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (foldM, foldM_)
 
-type GenerateTask a = HenHenConfig -> MetaKey -> Meta -> a -> EnvironmentTask
+type GenerateTask a = HenHenConfig -> TargetKey -> Meta -> a -> EnvironmentTask
 
 buildBinary :: GenerateTask SourceOptions
 buildBinary config key meta options = do
@@ -78,7 +78,7 @@ buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
-build :: HenHenConfig -> (MetaKey, Target) -> EnvironmentTask
+build :: HenHenConfig -> (TargetKey, Target) -> EnvironmentTask
 build config (key, target) = case target of
     (Egg meta options)        -> buildEgg config key meta options
     (Executable meta options) -> buildBinary config key meta options
@@ -87,17 +87,17 @@ buildAll :: HenHenConfig -> Environment -> Packager ()
 buildAll config env = do
     let targetMap = configTargets config
 
-    let getDependencies :: Target -> [(MetaKey, Target)]
+    let getDependencies :: Target -> [(TargetKey, Target)]
         getDependencies target = do
             -- Note: Dependencies that aren't targets are handled elsewhere.
             -- Because of this, we simply ignore them here.
-            let find :: MetaKey -> Maybe (MetaKey, Target)
+            let find :: TargetKey -> Maybe (TargetKey, Target)
                 find key = (key,) <$> HashMap.lookup key targetMap
 
             let keys = (metaDeps . getTargetMeta) target
             mapMaybe find keys
 
-    let deepBuild :: HashSet MetaKey -> (MetaKey, Target) -> Packager (HashSet MetaKey)
+    let deepBuild :: HashSet TargetKey -> (TargetKey, Target) -> Packager (HashSet TargetKey)
         deepBuild visited (self, target) = do
             if HashSet.member self visited then return visited else do
                 -- Build all dependencies recursively, in order, storing the new 'visited' set.

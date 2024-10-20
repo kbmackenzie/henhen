@@ -13,7 +13,7 @@ module HenHen.Config.Type
 , getSourcePath
 ) where
 
-import HenHen.Config.Target (Target, MetaKey)
+import HenHen.Config.Target (Target, TargetKey)
 import Data.Aeson
     ( ToJSON(..)
     , FromJSON(..)
@@ -33,15 +33,15 @@ import System.FilePattern (FilePattern)
 import System.FilePath ((</>), normalise)
 
 data HenHenConfig = HenHenConfig
-    { configName      :: Maybe String             -- Project name.
-    , configSources   :: [FilePattern]            -- Patterns for matching source files.
-    , configDataFiles :: [FilePattern]            -- Patterns for matching data files.
-    , configSourceDir :: Maybe FilePath           -- Source root.
-    , configDeps      :: HashSet String           -- Project dependencies.
-    , configFetch     :: HashMap String String    -- From where to fetch custom dependencies.
-    , configScripts   :: HashMap String String    -- Config scripts.
-    , configAliases   :: Maybe Aliases            -- Aliases for CHICKEN Scheme binaries.
-    , configTargets   :: HashMap MetaKey Target } -- Build targets.
+    { configName      :: Maybe String               -- Project name.
+    , configSources   :: [FilePattern]              -- Patterns for matching source files.
+    , configDataFiles :: [FilePattern]              -- Patterns for matching data files.
+    , configSourceDir :: Maybe FilePath             -- Source root.
+    , configDeps      :: HashSet String             -- Project dependencies.
+    , configFetch     :: HashMap String String      -- From where to fetch custom dependencies.
+    , configScripts   :: HashMap String String      -- Config scripts.
+    , configAliases   :: Maybe Aliases              -- Aliases for CHICKEN Scheme binaries.
+    , configTargets   :: HashMap TargetKey Target } -- Build targets.
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String

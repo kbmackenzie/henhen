@@ -5,7 +5,7 @@
 module HenHen.Config.Target
 ( Target(..)
 , Meta(..)
-, MetaKey(..)
+, TargetKey(..)
 , EggOptions(..)
 , SourceOptions(..)
 , getTargetMeta
@@ -33,11 +33,11 @@ import Data.Hashable (Hashable)
 import qualified Data.Text as Text
 
 data Meta = Meta
-    { metaDeps    :: [MetaKey]
+    { metaDeps    :: [TargetKey]
     , metaTrack   :: [FilePath]
     , metaOptions :: [String]   }
 
-newtype MetaKey = MetaKey { getKey :: String }
+newtype TargetKey = TargetKey { getKey :: String }
     deriving (Eq, Ord, Hashable)
 
 data Target =
@@ -61,21 +61,21 @@ getTargetMeta (Executable meta _) = meta
 -- JSON/YAML parsing:
 ------------------------------------
 
-parseMetaKey :: Text -> Parser MetaKey
-parseMetaKey text = if Text.all isAlphaNum text
-    then (return . MetaKey . Text.unpack) text
+parseTargetKey :: Text -> Parser TargetKey
+parseTargetKey text = if Text.all isAlphaNum text
+    then (return . TargetKey . Text.unpack) text
     else fail ("invalid character in key for target: " ++ show text)
 
-instance FromJSON MetaKey where
-    parseJSON = withText "MetaKey" parseMetaKey
+instance FromJSON TargetKey where
+    parseJSON = withText "TargetKey" parseTargetKey
 
-instance ToJSON MetaKey where
+instance ToJSON TargetKey where
     toJSON = toJSON . getKey
 
-instance FromJSONKey MetaKey where
-    fromJSONKey = FromJSONKeyTextParser parseMetaKey
+instance FromJSONKey TargetKey where
+    fromJSONKey = FromJSONKeyTextParser parseTargetKey
 
-instance ToJSONKey MetaKey where
+instance ToJSONKey TargetKey where
     toJSONKey = toJSONKeyText (Text.pack . getKey)
 
 parseMeta :: Object -> Parser Meta
