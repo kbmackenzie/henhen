@@ -32,13 +32,13 @@ import Data.Char (toLower, isAlphaNum)
 import Data.Hashable (Hashable)
 import qualified Data.Text as Text
 
+newtype TargetKey = TargetKey { getKey :: String }
+    deriving (Eq, Ord, Hashable)
+
 data TargetMeta = TargetMeta
     { metaDeps    :: [TargetKey]
     , metaTrack   :: [FilePath]
     , metaOptions :: [String]   }
-
-newtype TargetKey = TargetKey { getKey :: String }
-    deriving (Eq, Ord, Hashable)
 
 data Target =
       Egg        TargetMeta EggOptions
