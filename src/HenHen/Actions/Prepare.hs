@@ -19,7 +19,14 @@ import HenHen.Environment
     , localChickenBin
     )
 import HenHen.Cache (CacheInfo(..), tryGetCache, writeCache)
-import HenHen.Utils.IO (createDirectory, globFiles, copyFileSafe, getFileModTime)
+import HenHen.Utils.IO
+    ( createDirectory
+    , globFiles
+    , copyFileSafe
+    , getFileModTime
+    , exists
+    , EntryType(..)
+    )
 import HenHen.Utils.Time (getPosixTimeInSeconds)
 import Data.Maybe (fromMaybe)
 import System.FilePath ((</>))
@@ -83,5 +90,14 @@ prepare config env = do
     files <- globFiles sourceDir patterns
 
     let copy :: FilePath -> Packager ()
-        copy path = copyFileSafe path (localBuild </> path)
+        copy path = do
+            let destination = localBuild </> path
+            alreadyExists <- exists File destination
+            if alreadyExists
+                then do
+                    sourceMod <- getFileModTime path
+                    destMod   <- getFileModTime destination
+                    when (sourceMod > destMod) $
+                        copyFileSafe path destination
+                else copyFileSafe path destination
     mapM_ copy files
