@@ -69,7 +69,7 @@ buildEgg config key meta options = do
     let installer = getInstaller config
     EnvironmentTask
         { taskCommand     = installer
-        , taskArguments   = []
+        , taskArguments   = metaOptions meta
         , taskDirectory   = Just directory
         , taskErrorReport = Just . buildFail $ "egg " ++ show name
         , afterTask       = Nothing }
