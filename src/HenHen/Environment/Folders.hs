@@ -2,6 +2,7 @@ module HenHen.Environment.Folders
 ( localChicken
 , localBuild
 , localChickenBin
+, localChickenRepo
 , localDependencies
 ) where
 
@@ -15,6 +16,9 @@ localBuild = localChicken </> "_build"
 
 localChickenBin :: FilePath
 localChickenBin = localChicken </> "bin"
+
+localChickenRepo :: FilePath
+localChickenRepo = localChicken </> "lib" </> "chicken"
 
 localDependencies :: FilePath
 localDependencies = localChicken </> "_dependencies"

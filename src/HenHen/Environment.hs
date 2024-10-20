@@ -4,6 +4,7 @@ module HenHen.Environment
 , localChicken
 , localBuild
 , localChickenBin
+, localChickenRepo
 , localDependencies
 , EnvironmentTask(..)
 , runEnvironmentTask
@@ -14,6 +15,7 @@ import HenHen.Environment.Folders
     ( localChicken
     , localBuild
     , localChickenBin
+    , localChickenRepo
     , localDependencies
     )
 import HenHen.Environment.Type (Environment, createEnvironment)
