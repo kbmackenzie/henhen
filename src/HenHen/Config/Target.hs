@@ -9,8 +9,6 @@ module HenHen.Config.Target
 , EggOptions(..)
 , SourceOptions(..)
 , getTargetMeta
-, getTargetKey
-, getTargetMap
 ) where
 
 import Data.Aeson
@@ -23,18 +21,19 @@ import Data.Aeson
     , withText
     , object
     , (.=)
+    , FromJSONKey(..)
+    , ToJSONKey(..)
+    , FromJSONKeyFunction(..)
     )
-import Data.Aeson.Types (Parser, Pair)
+import Data.Aeson.Types (Parser, Pair, toJSONKeyText)
 import HenHen.Utils.Maybe (optional)
-import qualified Data.Text as Text
+import Data.Text (Text)
 import Data.Char (toLower, isAlphaNum)
 import Data.Hashable (Hashable)
-import Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HashMap
+import qualified Data.Text as Text
 
 data Meta = Meta
-    { metaKey     :: MetaKey
-    , metaDeps    :: [MetaKey]
+    { metaDeps    :: [MetaKey]
     , metaTrack   :: [FilePath]
     , metaOptions :: [String]   }
 
@@ -58,30 +57,30 @@ getTargetMeta :: Target -> Meta
 getTargetMeta (Egg meta _)        = meta
 getTargetMeta (Executable meta _) = meta
 
-getTargetKey :: Target -> MetaKey
-getTargetKey = metaKey . getTargetMeta
-
-getTargetMap :: [Target] -> HashMap MetaKey Target
-getTargetMap = HashMap.fromList . map toPair
-    where toPair target = (getTargetKey target, target)
-
 ------------------------------------
 -- JSON/YAML parsing:
 ------------------------------------
 
+parseMetaKey :: Text -> Parser MetaKey
+parseMetaKey text = if Text.all isAlphaNum text
+    then (return . MetaKey . Text.unpack) text
+    else fail ("invalid character in key for target: " ++ show text)
+
 instance FromJSON MetaKey where
-    parseJSON = withText "MetaKey" $
-        \text -> if Text.all isAlphaNum text
-            then (return . MetaKey . Text.unpack) text
-            else fail ("Invalid target key: " ++ show text)
+    parseJSON = withText "MetaKey" parseMetaKey
 
 instance ToJSON MetaKey where
     toJSON = toJSON . getKey
 
+instance FromJSONKey MetaKey where
+    fromJSONKey = FromJSONKeyTextParser parseMetaKey
+
+instance ToJSONKey MetaKey where
+    toJSONKey = toJSONKeyText (Text.pack . getKey)
+
 parseMeta :: Object -> Parser Meta
 parseMeta obj = Meta
-    <$> (obj .: "name")
-    <*> optional mempty (obj .:? "dependencies")
+    <$> optional mempty (obj .:? "dependencies")
     <*> optional mempty (obj .:? "track")
     <*> optional mempty (obj .:? "extra-options")
 
@@ -102,8 +101,7 @@ instance FromJSON Target where
 
 serializeMeta :: Meta -> [Pair]
 serializeMeta meta =
-    [ "name"          .= metaKey  meta
-    , "dependencies"  .= metaDeps meta
+    [ "dependencies"  .= metaDeps meta
     , "track"         .= metaTrack meta
     , "extra-options" .= metaOptions meta ]
 

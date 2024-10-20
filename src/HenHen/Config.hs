@@ -13,8 +13,6 @@ module HenHen.Config
 , SourceOptions(..)
 , EggOptions(..)
 , getTargetMeta
-, getTargetKey
-, getTargetMap
 , configPath
 , readConfig
 , writeConfig
@@ -39,8 +37,6 @@ import HenHen.Config.Target
     , SourceOptions(..)
     , EggOptions(..)
     , getTargetMeta
-    , getTargetKey
-    , getTargetMap
     )
 import HenHen.Config.Manage
     ( configPath

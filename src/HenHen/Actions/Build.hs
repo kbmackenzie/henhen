@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module HenHen.Actions.Build
 ( build
 , buildAll
@@ -13,7 +15,6 @@ import HenHen.Config
     , EggOptions(..)
     , getInstaller
     , getTargetMeta
-    , getTargetKey
     )
 import HenHen.Environment
     ( Environment
@@ -32,11 +33,11 @@ import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (foldM, foldM_)
 
-type GenerateTask a = HenHenConfig -> Meta -> a -> EnvironmentTask
+type GenerateTask a = HenHenConfig -> MetaKey -> Meta -> a -> EnvironmentTask
 
 buildBinary :: GenerateTask SourceOptions
-buildBinary config meta options = do
-    let name   = (getKey . metaKey) meta
+buildBinary config key meta options = do
+    let name   = getKey key
     let source = fromMaybe (addExtension name "scm") (sourcePath options)
     let binary = toExecutablePath name
 
@@ -62,8 +63,8 @@ buildBinary config meta options = do
         , afterTask       = Just after }
 
 buildEgg :: GenerateTask EggOptions
-buildEgg config meta options = do
-    let name      = (getKey . metaKey) meta
+buildEgg config key meta options = do
+    let name      = getKey key
     let directory = maybe localBuild (localBuild </>) (eggDirectory options)
     let installer = getInstaller config
     EnvironmentTask
@@ -77,32 +78,34 @@ buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
-build :: HenHenConfig -> Target -> EnvironmentTask
-build config target = case target of
-    (Egg meta options)        -> buildEgg config meta options
-    (Executable meta options) -> buildBinary config meta options
+build :: HenHenConfig -> (MetaKey, Target) -> EnvironmentTask
+build config (key, target) = case target of
+    (Egg meta options)        -> buildEgg config key meta options
+    (Executable meta options) -> buildBinary config key meta options
 
 buildAll :: HenHenConfig -> Environment -> Packager ()
 buildAll config env = do
     let targetMap = configTargets config
 
-    let getDependencies :: Target -> [Target]
+    let getDependencies :: Target -> [(MetaKey, Target)]
         getDependencies target = do
             -- Note: Dependencies that aren't targets are handled elsewhere.
             -- Because of this, we simply ignore them here.
-            let keys = (metaDeps . getTargetMeta) target
-            mapMaybe (`HashMap.lookup` targetMap) keys
+            let find :: MetaKey -> Maybe (MetaKey, Target)
+                find key = (key,) <$> HashMap.lookup key targetMap
 
-    let deepBuild :: HashSet MetaKey -> Target -> Packager (HashSet MetaKey)
-        deepBuild visited target = do
-            let self = getTargetKey target
+            let keys = (metaDeps . getTargetMeta) target
+            mapMaybe find keys
+
+    let deepBuild :: HashSet MetaKey -> (MetaKey, Target) -> Packager (HashSet MetaKey)
+        deepBuild visited (self, target) = do
             if HashSet.member self visited then return visited else do
                 -- Build all dependencies recursively, in order, storing the new 'visited' set.
                 let visitedSelf = HashSet.insert self visited
                 let buildDependencies = foldM deepBuild visitedSelf (getDependencies target)
 
                 visitedDependencies <- buildDependencies
-                runEnvironmentTask env (build config target)
+                runEnvironmentTask env $ build config (self, target)
                 return visitedDependencies
 
-    foldM_ deepBuild mempty $ configTargets config
+    foldM_ deepBuild mempty ((HashMap.toList . configTargets) config)

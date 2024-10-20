@@ -13,7 +13,7 @@ module HenHen.Config.Type
 , getSourcePath
 ) where
 
-import HenHen.Config.Target (Target, MetaKey, getTargetMap)
+import HenHen.Config.Target (Target, MetaKey)
 import Data.Aeson
     ( ToJSON(..)
     , FromJSON(..)
@@ -79,7 +79,7 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "fetch")
         <*> optional mempty (obj .:? "scripts")
         <*> (obj .:? "aliases")
-        <*> fmap getTargetMap (optional mempty (obj .:? "targets"))
+        <*> optional mempty (obj .:? "targets")
 
 instance ToJSON HenHenConfig where
     toJSON config = object
