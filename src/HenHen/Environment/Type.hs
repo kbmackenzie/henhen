@@ -1,4 +1,5 @@
 {-# LANGUAGE StrictData #-}
+{-# LANGUAGE LambdaCase #-}
 
 module HenHen.Environment.Type
 ( Environment
@@ -18,6 +19,7 @@ import System.Directory (canonicalizePath)
 import System.Process (readProcess)
 import System.Environment (getEnvironment)
 import Control.Exception (IOException, catch)
+import Data.Bifunctor (first)
 
 type Environment = [(String, String)]
 
@@ -25,16 +27,30 @@ data ChickenEnvironment = ChickenEnvironment
     { environmentRoot    :: FilePath
     , environmentRepo    :: FilePath
     , repositoryVariable :: String   }
+    deriving (Show)
 
 getLocalChicken :: (MonadIO m) => m FilePath
 getLocalChicken = liftIO (canonicalizePath localChicken)
 
 getSystemChicken :: (MonadIO m) => String -> m (Either String FilePath)
-getSystemChicken installer = liftIO $ do
-    let getter = readProcess installer ["-repository"] mempty
-    fmap Right getter `catch` \e -> do
-        let errorMessage = show (e :: IOException)
-        return (Left errorMessage)
+getSystemChicken installer = do
+    let getRepository :: IO (Either String FilePath)
+        getRepository = do
+            let repository = readProcess installer ["-repository"] mempty
+            fmap Right repository `catch` \e -> do
+                let errorMessage = show (e :: IOException)
+                return (Left errorMessage)
+
+    let getFirstLine :: String -> Either String String
+        getFirstLine str = case lines str of
+            (x:_) -> Right x
+            []    -> Left "Expected lines, got empty string!"
+
+    let addErrorContext :: Either String String -> Either String String
+        addErrorContext = first ("Couldn't get CHICKEN system repository: " ++)
+
+    repository <- liftIO getRepository
+    (return . addErrorContext) (repository >>= getFirstLine)
 
 getChickenVars :: ChickenEnvironment -> [(String, String)]
 getChickenVars env =
@@ -63,4 +79,7 @@ createEnvironment config = do
     let variables  = (:) ("PATH", newPath) $ getChickenVars chickenEnv
     let processEnv = unionBy ((==) `on` fst) variables parentEnv
 
+    liftIO $ do
+        print chickenEnv
+        print processEnv
     return processEnv
