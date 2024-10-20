@@ -23,7 +23,7 @@ import HenHen.Environment
     , runEnvironmentTask
     )
 import HenHen.Utils.FilePath (toExecutablePath)
-import HenHen.Utils.IO (fileLink)
+import HenHen.Utils.IO (createFileLinkSafe)
 import System.FilePath ((</>), addExtension)
 import Data.Maybe (fromMaybe, mapMaybe)
 import HenHen.Packager (Packager)
@@ -51,7 +51,7 @@ buildBinary config meta options = do
             -- Create symlink in '<local-chicken>/bin'!
             let from = localBuild </> binary
             let to   = localChickenBin </> binary
-            fileLink from to
+            createFileLinkSafe True from to
 
     let compiler = getCompiler config
     EnvironmentTask
