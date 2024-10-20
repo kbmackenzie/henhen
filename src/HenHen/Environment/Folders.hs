@@ -18,7 +18,7 @@ localChickenBin :: FilePath
 localChickenBin = localChicken </> "bin"
 
 localChickenRepo :: FilePath
-localChickenRepo = localChicken </> "lib" </> "chicken"
+localChickenRepo = localChicken </> "lib"
 
 localDependencies :: FilePath
 localDependencies = localChicken </> "_dependencies"

@@ -65,7 +65,7 @@ getChickenEnvironment config = do
     let installer = getInstaller config
     systemRepo <- getSystemChicken installer >>= liftEither
 
-    let localRepo = localEnv </> "lib" </> "chicken"
+    let localRepo = localEnv </> "lib"
     let repositories = concat [localRepo, singleton searchPathSeparator, systemRepo]
 
     return ChickenEnvironment
