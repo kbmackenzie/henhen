@@ -1,5 +1,4 @@
 {-# LANGUAGE StrictData #-}
-{-# LANGUAGE LambdaCase #-}
 
 module HenHen.Environment.Type
 ( Environment
@@ -26,6 +25,7 @@ type Environment = [(String, String)]
 data ChickenEnvironment = ChickenEnvironment
     { environmentRoot    :: FilePath
     , environmentRepo    :: FilePath
+    , environmentCache   :: FilePath
     , repositoryVariable :: String   }
     deriving (Show)
 
@@ -56,6 +56,7 @@ getChickenVars :: ChickenEnvironment -> [(String, String)]
 getChickenVars env =
     [ ("CHICKEN_INSTALL_PREFIX"    , environmentRoot env   )
     , ("CHICKEN_INSTALL_REPOSITORY", environmentRepo env   )
+    , ("CHICKEN_EGG_CACHE"         , environmentCache env  )
     , ("CHICKEN_REPOSITORY_PATH"   , repositoryVariable env) ]
 
 getChickenEnvironment :: HenHenConfig -> Packager ChickenEnvironment
@@ -67,6 +68,7 @@ getChickenEnvironment config = do
     return ChickenEnvironment
         { environmentRoot    = localEnv
         , environmentRepo    = localEnv </> "lib" </> "chicken"
+        , environmentCache   = localEnv </> "cache"
         , repositoryVariable = concat [ localEnv, ":", systemRepo ] }
 
 createEnvironment :: HenHenConfig -> Packager Environment
