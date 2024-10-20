@@ -17,6 +17,7 @@ import HenHen.Environment
     , localChicken
     , localBuild
     , localChickenBin
+    , localDependencies
     )
 import HenHen.Cache (CacheInfo(..), tryGetCache, writeCache)
 import HenHen.Utils.IO
@@ -75,7 +76,8 @@ prepare config env = do
     mapM_ (createDirectory False)
         [ localChicken
         , localBuild
-        , localChickenBin ]
+        , localChickenBin
+        , localDependencies ]
 
     cache      <- fromMaybe emptyCache <$> tryGetCache
     configTime <- getFileModTime configPath
