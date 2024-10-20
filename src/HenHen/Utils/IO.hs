@@ -2,19 +2,20 @@ module HenHen.Utils.IO
 ( readFileSafe
 , getFileModTime
 , writeFileSafe
-, fileLink
 , EntryType(..)
 , exists
 , createDirectory
 , globFiles
 , copyFileSafe
 , removeDirectory
+, removeFileSafe
+, createFileLinkSafe
 ) where
 
 import HenHen.Packager (Packager, liftIO, liftEither)
 import Data.ByteString (ByteString)
 import Control.Exception (catch, IOException)
-import Control.Monad ((>=>))
+import Control.Monad ((>=>), when)
 import qualified Data.ByteString as ByteString
 import System.FilePath ((</>))
 import System.Directory
@@ -26,6 +27,9 @@ import System.Directory
     , createDirectoryIfMissing
     , copyFile
     , removeDirectoryRecursive
+    , removeFile
+    , removePathForcibly
+    , canonicalizePath
     )
 import System.FilePattern.Directory
     ( FilePattern
@@ -57,13 +61,6 @@ writeFileSafe path content = (liftIO >=> liftEither) $ do
     let writer = (fmap Right .) . ByteString.writeFile
     writer path content `catch` \err -> do
         let message = fileError "couldn't write file" path err
-        return $ Left message
-
-fileLink :: FilePath -> FilePath -> Packager ()
-fileLink input output = (liftIO >=> liftEither) $ do
-    let link = (fmap Right .) . createFileLink
-    link input output `catch` \err -> do
-        let message = fileError "couldn't create symlink" output err
         return $ Left message
 
 data EntryType = Any | File | Directory
@@ -107,3 +104,23 @@ removeDirectory path = (liftIO >=> liftEither) $ do
     rm path `catch` \err -> do
         let message = fileError "couldn't remove directory" path err
         return $ Left message
+
+removeFileSafe :: FilePath -> Packager ()
+removeFileSafe path = (liftIO >=> liftEither) $ do
+    let rm = fmap Right . removeFile
+    print "removing..."
+    rm path `catch` \err -> do
+        let message = fileError "couldn't remove file" path err
+        return $ Left message
+
+createFileLinkSafe :: Bool -> FilePath -> FilePath -> Packager ()
+createFileLinkSafe overwrite target symlink = do
+    let link :: IO ()
+        link = do
+            when overwrite (removePathForcibly symlink)
+            targetPath <- canonicalizePath target
+            createFileLink targetPath symlink
+    (liftIO >=> liftEither) $ do
+        fmap Right link `catch` \err -> do
+            let message = fileError "couldn't create symlink" symlink err
+            return $ Left message
