@@ -29,7 +29,7 @@ import HenHen.Utils.IO
     )
 import HenHen.Utils.Time (getPosixTimeInSeconds)
 import Data.Maybe (fromMaybe)
-import System.FilePath ((</>))
+import System.FilePath ((</>), takeDirectory)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
@@ -92,6 +92,8 @@ prepare config env = do
     let copy :: FilePath -> Packager ()
         copy path = do
             let destination = localBuild </> path
+            createDirectory True (takeDirectory destination)
+
             alreadyExists <- exists File destination
             if alreadyExists
                 then do
