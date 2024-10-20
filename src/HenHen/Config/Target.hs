@@ -60,9 +60,11 @@ getTargetMeta (Executable meta _) = meta
 ------------------------------------
 -- JSON/YAML parsing:
 ------------------------------------
+isKeyChar :: Char -> Bool
+isKeyChar c = isAlphaNum c || c == '-' || c == '_'
 
 parseTargetKey :: Text -> Parser TargetKey
-parseTargetKey text = if Text.all isAlphaNum text
+parseTargetKey text = if Text.all isKeyChar text
     then (return . TargetKey . Text.unpack) text
     else fail ("invalid character in key for target: " ++ show text)
 
