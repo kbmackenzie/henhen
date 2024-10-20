@@ -9,11 +9,11 @@ module HenHen.Environment.Type
 import HenHen.Config (HenHenConfig(..), getInstaller)
 import HenHen.Packager (Packager, liftEither)
 import HenHen.Environment.Folders (localChicken)
-import Data.List (unionBy)
+import Data.List (unionBy, singleton)
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
 import Control.Monad.IO.Class (MonadIO(..))
-import System.FilePath ((</>))
+import System.FilePath ((</>), searchPathSeparator)
 import System.Directory (canonicalizePath)
 import System.Process (readProcess)
 import System.Environment (getEnvironment)
@@ -64,21 +64,25 @@ getChickenEnvironment config = do
     localEnv <- getLocalChicken
     let installer = getInstaller config
     systemRepo <- getSystemChicken installer >>= liftEither
+    let repositories = concat [localEnv, singleton searchPathSeparator, systemRepo]
 
     return ChickenEnvironment
         { environmentRoot    = localEnv
         , environmentRepo    = localEnv </> "lib" </> "chicken"
         , environmentCache   = localEnv </> "cache"
-        , repositoryVariable = concat [ localEnv, ":", systemRepo ] }
+        , repositoryVariable = repositories }
 
 createEnvironment :: HenHenConfig -> Packager Environment
 createEnvironment config = do
     chickenEnv <- getChickenEnvironment config
     parentEnv  <- liftIO getEnvironment
-    let pathVar = fromMaybe mempty $ lookup "PATH" parentEnv
+    let searchPath = fromMaybe mempty $ lookup "PATH" parentEnv
 
-    let newPath    = concat [ environmentRoot chickenEnv </> "bin" , ":" , pathVar ]
-    let variables  = (:) ("PATH", newPath) $ getChickenVars chickenEnv
+    let newSearchPath = concat
+            [ environmentRoot chickenEnv </> "bin"
+            , singleton searchPathSeparator
+            , searchPath ]
+    let variables  = (:) ("PATH", newSearchPath) $ getChickenVars chickenEnv
     let processEnv = unionBy ((==) `on` fst) variables parentEnv
 
     liftIO $ do
