@@ -8,8 +8,8 @@ module HenHen.Config
 , getUninstaller
 , getSourcePath
 , Target(..)
-, Meta(..)
 , TargetKey(..)
+, TargetMeta(..)
 , SourceOptions(..)
 , EggOptions(..)
 , getTargetMeta
@@ -32,8 +32,8 @@ import HenHen.Config.Type
     )
 import HenHen.Config.Target
     ( Target(..)
-    , Meta(..)
     , TargetKey(..)
+    , TargetMeta(..)
     , SourceOptions(..)
     , EggOptions(..)
     , getTargetMeta

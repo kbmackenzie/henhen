@@ -9,8 +9,8 @@ import HenHen.Config
     ( HenHenConfig(..)
     , getCompiler
     , Target(..)
-    , Meta(..)
     , TargetKey(..)
+    , TargetMeta(..)
     , SourceOptions(..)
     , EggOptions(..)
     , getInstaller
@@ -33,7 +33,7 @@ import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (foldM, foldM_)
 
-type GenerateTask a = HenHenConfig -> TargetKey -> Meta -> a -> EnvironmentTask
+type GenerateTask a = HenHenConfig -> TargetKey -> TargetMeta -> a -> EnvironmentTask
 
 buildBinary :: GenerateTask SourceOptions
 buildBinary config key meta options = do

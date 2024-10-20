@@ -4,8 +4,8 @@
 
 module HenHen.Config.Target
 ( Target(..)
-, Meta(..)
 , TargetKey(..)
+, TargetMeta(..)
 , EggOptions(..)
 , SourceOptions(..)
 , getTargetMeta
@@ -32,7 +32,7 @@ import Data.Char (toLower, isAlphaNum)
 import Data.Hashable (Hashable)
 import qualified Data.Text as Text
 
-data Meta = Meta
+data TargetMeta = TargetMeta
     { metaDeps    :: [TargetKey]
     , metaTrack   :: [FilePath]
     , metaOptions :: [String]   }
@@ -41,8 +41,8 @@ newtype TargetKey = TargetKey { getKey :: String }
     deriving (Eq, Ord, Hashable)
 
 data Target =
-      Egg        Meta EggOptions
-    | Executable Meta SourceOptions
+      Egg        TargetMeta EggOptions
+    | Executable TargetMeta SourceOptions
 
 newtype SourceOptions = SourceOptions
     { sourcePath     :: Maybe FilePath }
@@ -53,7 +53,7 @@ newtype EggOptions = EggOptions
 ------------------------------------
 -- Utilities:
 ------------------------------------
-getTargetMeta :: Target -> Meta
+getTargetMeta :: Target -> TargetMeta
 getTargetMeta (Egg meta _)        = meta
 getTargetMeta (Executable meta _) = meta
 
@@ -78,8 +78,8 @@ instance FromJSONKey TargetKey where
 instance ToJSONKey TargetKey where
     toJSONKey = toJSONKeyText (Text.pack . getKey)
 
-parseMeta :: Object -> Parser Meta
-parseMeta obj = Meta
+parseMeta :: Object -> Parser TargetMeta
+parseMeta obj = TargetMeta
     <$> optional mempty (obj .:? "dependencies")
     <*> optional mempty (obj .:? "track")
     <*> optional mempty (obj .:? "extra-options")
@@ -99,7 +99,7 @@ instance FromJSON Target where
             "executable" -> Executable meta <$> parseSource obj
             _            -> fail $ "unrecognized target tag: " ++ show tag
 
-serializeMeta :: Meta -> [Pair]
+serializeMeta :: TargetMeta -> [Pair]
 serializeMeta meta =
     [ "dependencies"  .= metaDeps meta
     , "track"         .= metaTrack meta
