@@ -18,7 +18,9 @@ readConfig = do
     content <- readFileSafe configPath `catchError` \message -> do
         let newMessage = "Couldn't read config file: " ++ message
         throwError newMessage
-    liftEither $ readYaml content
+    liftEither (readYaml content) `catchError` \message -> do
+        let newMessage = "Couldn't parse config file: " ++ message
+        throwError newMessage
 
 writeConfig :: HenHenConfig -> Packager ()
 writeConfig config = do
