@@ -109,8 +109,8 @@ serializeMeta meta =
 
 instance ToJSON Target where
     toJSON (Egg meta options) = object $ serializeMeta meta ++
-        [ "tag"       .= ("egg" :: String)
+        [ "type"      .= ("egg" :: String)
         , "directory" .= eggDirectory options ]
     toJSON (Executable meta options) = object $ serializeMeta meta ++
-        [ "tag"       .= ("executable" :: String)
+        [ "type"      .= ("executable" :: String)
         , "source"    .= sourcePath options   ]
