@@ -42,7 +42,7 @@ generateConfigDeps topLevelDeps targetDeps = do
 
 dependencies :: Spec
 dependencies = describe "collect dependencies from config" $ do
-    let collect  = List.sort . HashSet.toList . collectDependencies
+    let collect = List.sort . HashSet.toList . collectDependencies
 
     describe "top level + targets have dependencies" $ do
         let topLevel = ["abc", "def", "ghi"]
@@ -64,6 +64,14 @@ dependencies = describe "collect dependencies from config" $ do
         let config   = generateConfigDeps [] []
 
         it "should find no dependencies" $
+            collect config `shouldBe` []
+
+    describe "only targets have dependencies, and they only depend on other targets" $ do
+        let topLevel = []
+        let targets  = [("foo", []), ("bar", ["foo"]), ("baz", ["foo", "bar"])]
+        let config   = generateConfigDeps topLevel targets
+
+        it "should collect no dependencies" $
             collect config `shouldBe` []
 
 main :: IO ()
