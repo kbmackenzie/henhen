@@ -40,11 +40,11 @@ import Control.Monad (when, unless)
 collectDependencies :: HenHenConfig -> HashSet String
 collectDependencies config = do
     let topLevel = configDeps config
-    let isTarget :: TargetKey -> Bool
-        isTarget = flip HashMap.member (configTargets config)
+    let isNotTarget :: TargetKey -> Bool
+        isNotTarget = not . flip HashMap.member (configTargets config)
 
     let targets    = HashMap.elems (configTargets config)
-    let targetDeps = concatMap (filter isTarget . metaDeps . getTargetMeta) targets
+    let targetDeps = concatMap (filter isNotTarget . metaDeps . getTargetMeta) targets
     HashSet.union topLevel (HashSet.fromList $ map getKey targetDeps)
 
 installDependencies :: HenHenConfig -> Environment -> CacheInfo -> Packager ()
