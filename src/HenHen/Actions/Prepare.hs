@@ -1,5 +1,6 @@
 module HenHen.Actions.Prepare
-( prepare
+( collectDependencies
+, prepare
 ) where
 
 import HenHen.Config
@@ -36,8 +37,8 @@ import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
 import Control.Monad (when, unless)
 
-gatherDependencies :: HenHenConfig -> HashSet String
-gatherDependencies config = do
+collectDependencies :: HenHenConfig -> HashSet String
+collectDependencies config = do
     let topLevel = configDeps config
     let isTarget :: TargetKey -> Bool
         isTarget = flip HashMap.member (configTargets config)
@@ -54,7 +55,7 @@ installDependencies config env cache = do
             unless hasCached $ do
                 let tasks = fetch config dep
                 mapM_ (runEnvironmentTask env) tasks
-    let dependencies = HashSet.toList (gatherDependencies config)
+    let dependencies = HashSet.toList (collectDependencies config)
     mapM_ install dependencies
 
 emptyCache :: CacheInfo
@@ -65,7 +66,7 @@ emptyCache = CacheInfo
 updateCache :: HenHenConfig -> Packager ()
 updateCache config = do
     timestamp <- getPosixTimeInSeconds
-    let dependencies = gatherDependencies config
+    let dependencies = collectDependencies config
 
     writeCache $ CacheInfo
         { buildTime     = timestamp

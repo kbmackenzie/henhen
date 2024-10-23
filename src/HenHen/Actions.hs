@@ -1,6 +1,7 @@
 module HenHen.Actions
 ( Action(..)
 , runAction
+, collectDependencies
 ) where
 
 import HenHen.Config (readConfig, hasConfig)
@@ -8,7 +9,7 @@ import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment, runEnvironmentTask)
 import HenHen.Actions.Build (buildAll)
 import HenHen.Actions.Run (run)
-import HenHen.Actions.Prepare (prepare)
+import HenHen.Actions.Prepare (prepare, collectDependencies)
 import HenHen.Actions.Clean (clean, purge)
 import HenHen.Actions.Init (initialize)
 import HenHen.Actions.Interpret (interpret)
