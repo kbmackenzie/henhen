@@ -83,8 +83,8 @@ library
 executable henhen
   main-is: Main.hs
   other-modules:
-      CLI.Options
-      CLI.Run
+      HenHen.CLI.Options
+      HenHen.CLI.Run
       Paths_henhen
   autogen-modules:
       Paths_henhen

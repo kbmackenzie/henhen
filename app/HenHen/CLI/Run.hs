@@ -1,11 +1,11 @@
 {-# LANGUAGE LambdaCase #-}
 
-module CLI.Run
+module HenHen.CLI.Run
 ( run
 ) where
 
 import HenHen (henhen)
-import CLI.Options (getAction)
+import HenHen.CLI.Options (getAction)
 import System.IO (hPutStrLn, stderr)
 
 run :: IO ()

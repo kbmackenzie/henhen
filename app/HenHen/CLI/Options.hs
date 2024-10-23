@@ -1,4 +1,4 @@
-module CLI.Options
+module HenHen.CLI.Options
 ( getAction
 ) where
 
