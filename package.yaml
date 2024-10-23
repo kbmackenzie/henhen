@@ -72,3 +72,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - henhen
+    - hspec >= 2.10.10 && < 2.11
+    - HUnit >= 1.6.2.0 && < 1.7
