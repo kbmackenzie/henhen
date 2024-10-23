@@ -37,7 +37,6 @@ newtype TargetKey = TargetKey { getKey :: String }
 
 data TargetMeta = TargetMeta
     { metaDeps    :: [TargetKey]
-    , metaTrack   :: [FilePath]
     , metaOptions :: [String]   }
 
 data Target =
@@ -83,7 +82,6 @@ instance ToJSONKey TargetKey where
 parseMeta :: Object -> Parser TargetMeta
 parseMeta obj = TargetMeta
     <$> optional mempty (obj .:? "dependencies")
-    <*> optional mempty (obj .:? "track")
     <*> optional mempty (obj .:? "extra-options")
 
 parseSource :: Object -> Parser SourceOptions
@@ -104,7 +102,6 @@ instance FromJSON Target where
 serializeMeta :: TargetMeta -> [Pair]
 serializeMeta meta =
     [ "dependencies"  .= metaDeps meta
-    , "track"         .= metaTrack meta
     , "extra-options" .= metaOptions meta ]
 
 instance ToJSON Target where
