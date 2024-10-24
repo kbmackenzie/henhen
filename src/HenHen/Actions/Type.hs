@@ -10,5 +10,6 @@ data Action =
     | Init      String              -- name of project
     | Interpret FilePath            -- path to script to run
     | Install   String              -- name of dep to install
+    | Copy      String FilePath     -- name of binary target and destination to copy to
     | Clean     Bool                -- "should purge?"
     deriving (Show)

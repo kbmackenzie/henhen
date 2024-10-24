@@ -14,6 +14,7 @@ import HenHen.Actions.Clean (clean, purge)
 import HenHen.Actions.Init (initialize)
 import HenHen.Actions.Interpret (interpret)
 import HenHen.Actions.Install (install)
+import HenHen.Actions.Copy (copy)
 import HenHen.Actions.Type (Action(..))
 
 runAction :: Action -> Packager ()
@@ -34,12 +35,9 @@ runAction action = do
     config <- readConfig
     env    <- createEnvironment config
     prepare config env
+    buildAll config env
     case action of
-        Build -> do
-            buildAll config env
-        (Run name args) -> do
-            buildAll config env
-            run config env name args
-        (Interpret source) -> do
-            buildAll config env
-            runEnvironmentTask env (interpret config source)
+        Build              -> return ()
+        (Run name args)    -> run config env name args
+        (Interpret source) -> runEnvironmentTask env (interpret config source)
+        (Copy name dest)   -> copy config name dest
