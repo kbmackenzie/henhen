@@ -33,6 +33,7 @@ library
   other-modules:
       HenHen.Actions.Build
       HenHen.Actions.Clean
+      HenHen.Actions.Copy
       HenHen.Actions.Init
       HenHen.Actions.Install
       HenHen.Actions.Interpret
