@@ -34,7 +34,7 @@ makeInfo :: Parser a -> String -> ParserInfo a
 makeInfo parser desc = info (parser <**> helper) (fullDesc <> progDesc desc)
 
 parseAction :: Parser Action
-parseAction = subparser . mconcat $ [build, run, init_, install, interpret, clean]
+parseAction = subparser . mconcat $ [build, run, init_, install, interpret, copy, clean]
     where
         build :: Mod CommandFields Action
         build = command "build" $ makeInfo (pure Build) "Build project"
@@ -43,7 +43,7 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, clea
         run = command "run" $ makeInfo parser "Run binary or script in virtual environment"
             where parser = Run <$> name <*> args
                   name   = argument str (metavar "NAME")
-                  args   = many (argument str (metavar "ARG"))
+                  args   = many (argument str (metavar "ARGS"))
 
         init_ :: Mod CommandFields Action
         init_ = command "init" $ makeInfo parser "Initialize project"
@@ -58,6 +58,10 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, clea
         interpret :: Mod CommandFields Action
         interpret = command "interpret" $ makeInfo parser "Interpret script in virtual environment"
             where parser = Interpret <$> argument str (metavar "PATH")
+
+        copy :: Mod CommandFields Action
+        copy = command "copy" $ makeInfo parser "Copy executable target"
+            where parser = Copy <$> argument str (metavar "NAME") <*> argument str (metavar "DESTINATION")
 
         clean :: Mod CommandFields Action
         clean = command "clean" $ makeInfo parser "Clean project directory"
