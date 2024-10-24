@@ -74,7 +74,7 @@ instance FromJSON HenHenConfig where
         <$> (obj .:? "name")
         <*> optional mempty (obj .:? "source-files")
         <*> optional mempty (obj .:? "data-files")
-        <*> (obj .:? "source-folder")
+        <*> (obj .:? "source-root")
         <*> optional mempty (obj .:? "dependencies")
         <*> optional mempty (obj .:? "fetch")
         <*> optional mempty (obj .:? "scripts")
@@ -86,7 +86,7 @@ instance ToJSON HenHenConfig where
         [ "name"          .= configName config
         , "source-files"  .= configSources config
         , "data-files"    .= configDataFiles config
-        , "source-folder" .= configSourceDir config
+        , "source-root"   .= configSourceDir config
         , "dependencies"  .= configDeps config
         , "fetch"         .= configFetch config
         , "scripts"       .= configScripts config
@@ -101,7 +101,7 @@ configFieldOrderMap = HashMap.fromList
     [ ("name"          , 1)
     , ("source-files"  , 2)
     , ("data-files"    , 3)
-    , ("source-folder" , 4)
+    , ("source-root"   , 4)
     , ("dependencies"  , 5)
     , ("fetch"         , 6)
     , ("scripts"       , 7)
