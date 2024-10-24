@@ -87,7 +87,4 @@ createEnvironment config = do
     let variables  = (:) ("PATH", newSearchPath) $ getChickenVars chickenEnv
     let processEnv = unionBy ((==) `on` fst) variables parentEnv
 
-    liftIO $ do
-        print chickenEnv
-        print processEnv
     return processEnv
