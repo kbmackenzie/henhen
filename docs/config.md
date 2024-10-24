@@ -55,7 +55,7 @@ dependencies:
 
 ### `fetch`
 
-A map associating custom dependency keys with their respective source URLs.
+A map associating custom dependency keys with their respective source URLs. All custom dependency URLs should point to Git repositories.
 
 Any URL that can be cloned with `git clone <url>` can be used!
 ```yaml
