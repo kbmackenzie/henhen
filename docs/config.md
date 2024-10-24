@@ -164,6 +164,8 @@ targets:
   my-egg:
     type: egg
     directory: './my-egg/'
+    dependencies:
+    - srfi-1
 ```
 
 ### Executables
@@ -183,4 +185,6 @@ targets:
   my-executable:
     type: executable
     source: './my-executable.scm'
+    dependencies:
+    - my-egg
 ```
