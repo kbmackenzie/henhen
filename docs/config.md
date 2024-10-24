@@ -1,0 +1,124 @@
+## HenHen Config
+
+The top-level fields you can define in your `henhen.yaml` config file are:
+
+### `name`
+
+The name of your project. This name is used in log messages and error messages, but does not currently have much value otherwise.
+
+### `source-files`
+
+A list of patterns for globbing source files, such as:
+
+- `*.scm`    - All .scm files in the current directory.
+- `src/**`   - All files inside the `src` directory.
+- `main.scm` - A `main.scm` file in the current directory.
+
+All the source files in your project should be locatable through the patterns you define in this list.
+
+```yaml
+source-files:
+- '*.scm'
+- '*.egg'
+```
+
+### `source-root`
+
+A directory where all source files are located. When you define this field in your config, HenHen will look for source files inside of that directory.
+
+All patterns defined in `source-files` are interpreted as relative to the source root.
+```yaml
+source-root: 'src' # Look for source files inside 'src'.
+```
+When this field isn't specified, HenHen uses the current directory as the source root.
+
+### `data-files`
+
+A list of patterns for globbing data files: static assets that are relevant to your project.
+
+It works exactly like `source-files`, but is **not affected** by `source-root`. Thus, you can safely define a source root and still easily glob static files from the current directory without indirections.
+
+### `dependencies`
+
+A list of dependencies for your project. A dependency can be: 
+
+- An egg available in the official egg index and installable through `chicken-install <name>`.
+- An egg with a source URL defined in the `fetch` field of your config file.
+
+When you build your project, all dependencies will be installed locally in the `.henhen` directory.
+
+```yaml
+dependencies:
+- srfi-1
+- srfi-13
+```
+
+### `fetch`
+
+A map associating custom dependency keys with their respective source URLs.
+
+Any URL that can be cloned with `git clone <url>` can be used!
+```yaml
+fetch:
+  foo: '<url here>'
+  bar: '<url here>'
+  baz: '<url here>'
+```
+Any dependencies defined in that map can then be listed as a dependency either on the top level `dependencies` field or in an individual target. All dependencies are installed when you build your project.
+
+### `scripts`
+
+A map where you can define custom shell script one-liners to use with `henhen run`.
+
+```yaml
+scripts:
+  test: 'henhen interpret tests/run.scm'
+```
+```bash
+# You can run scripts like you'd run a normal target:
+henhen run test
+```
+**Note:** A script and a target should not have the same name. When there's a name conflict between a script and a target, HenHen will choose to run the script.
+
+### `aliases`
+
+A map where you can define **aliases** for the various CHICKEN commands/binaries.
+
+This is useful if your installation of CHICKEN has different names for the commands/binaries. Some distribution packages will install the interpreter as `chicken-csi` instead of `csi`, for example.
+
+The available fields are:
+
+| Field       | Description                                         |
+|-------------|-----------------------------------------------------|
+| installer   | The installer command. (Default: `chicken-install`) |
+| compiler    | The compiler command. (Default: `csc`)              |
+| interpreter | The interpreter command. (Default: `csi`)           |
+
+```yaml
+aliases:
+  compiler: chicken-csc
+  interpreter: chicken-csi
+```
+
+### `targets`
+
+A map where you can define the **build targets** for your project.
+
+A **build target** can be:
+
+- A CHICKEN egg defined somewhere within the project directory (with its own `.egg` file).
+- A source file to be compiled into a static binary executable.
+
+Targets can have their own list of dependencies, and they can depend on other targets. HenHen will always build a target's dependencies first before building the target itself.
+
+[See the section on build targets](#build-targets) to learn how to define them.
+
+```yaml
+targets:
+  hello-world:
+    type: executable
+    source: './hello-world.scm'
+  example-egg:
+    type: egg
+    directory: './example-egg/'
+```
