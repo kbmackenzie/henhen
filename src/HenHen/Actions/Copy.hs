@@ -23,4 +23,5 @@ copy config name destination = do
             (Just (Executable _ _)) -> return (localChickenBin </> toExecutablePath name)
             (Just (Egg        _ _)) -> throwError (failMessage "target isn't an executable")
             Nothing                 -> throwError (failMessage "no target matches that name")
-    copyFileSafe binary destination
+    let output = destination </> toExecutablePath name
+    copyFileSafe binary output
