@@ -61,7 +61,9 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, copy
 
         copy :: Mod CommandFields Action
         copy = command "copy" $ makeInfo parser "Copy executable target"
-            where parser = Copy <$> argument str (metavar "NAME") <*> argument str (metavar "DESTINATION")
+            where parser = Copy <$> name <*> dest
+                  name   = argument str (metavar "NAME")
+                  dest   = fromMaybe "." <$> optional (argument str (metavar "DESTINATION"))
 
         clean :: Mod CommandFields Action
         clean = command "clean" $ makeInfo parser "Clean project directory"
