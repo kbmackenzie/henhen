@@ -1,3 +1,19 @@
+## Table of Contents
+
+1. [HenHen Config](#henhen-config)
+  1. [name](#name)
+  2. [source-files](#source-files)
+  3. [source-root](#source-root)
+  4. [data-files](#data-files)
+  5. [dependencies](#dependencies)
+  6. [fetch](#fetch)
+  7. [scripts](#scripts)
+  8. [aliases](#aliases)
+  9. [targets](#targets)
+2. [Build Targets](#build-targets)
+  1. [Eggs](#eggs)
+  2. [Executables](#executables)
+
 ## HenHen Config
 
 The top-level fields you can define in your `henhen.yaml` config file are:
@@ -121,4 +137,50 @@ targets:
   example-egg:
     type: egg
     directory: './example-egg/'
+```
+
+## Build Targets
+
+A **build target** represents one component of a project that should be built when the project is built.
+
+Targets can depend on each other: a target's dependencies are always built before the target itself. 
+
+A target is defined as a map. The `type` field defines what type of build target it is, and what additional fields it supports. HenHen supports two types of targets: `egg` targets and `executable` targets.
+
+### Eggs
+
+Egg targets can be defined with `type: egg`, and accept the following fields:
+
+| Field           | Description                                                              |
+|-----------------|--------------------------------------------------------------------------|
+| `directory`     | The egg's root directory (where the `.egg` file is located).             |
+| `dependencies`  | The egg's dependencies. (See [this section](#dependencies)!)             |
+| `extra-options` | Extra options to be passed to `chicken-install` when installing the egg. |
+
+When an egg target is built, it's locally installed in the `.henhen` directory.
+
+```yaml
+targets:
+  my-egg:
+    type: egg
+    directory: './my-egg/'
+```
+
+### Executables
+
+Static binary executable targets can be defined with `type: executable`, and accept the following fields:
+
+| Field           | Description                                                          |
+|-----------------|----------------------------------------------------------------------|
+| `source`        | The path to the source file to be compiled into an executable.       |
+| `dependencies`  | The source file's dependencies. (See [this section](#dependencies)!) |
+| `extra-options` | Extra options to be passed to `csc` when compiling the executable.   |
+
+When an executable target is built, it's locally installed in the `.henhen` directory, and it can be run with `henhen run <name>`. The generated file can be copied to a specified directory with `henhen copy`.
+
+```yaml
+targets:
+  my-executable:
+    type: executable
+    source: './my-executable.scm'
 ```
