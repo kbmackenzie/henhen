@@ -35,6 +35,7 @@ import System.FilePath ((</>), takeDirectory)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
+import Data.Containers.ListUtils (nubOrd)
 import Control.Monad (when, unless)
 
 collectDependencies :: HenHenConfig -> HashSet String
@@ -89,8 +90,10 @@ prepare config env = do
         updateCache config
 
     let sourceDir = fromMaybe "." (configSourceDir config)
-    let patterns  = configSources config ++ configDataFiles config
-    files <- globFiles sourceDir patterns
+    sourceFiles <- globFiles sourceDir (configSources config)
+    dataFiles   <- globFiles "." (configDataFiles config)
+
+    let files = nubOrd (sourceFiles ++ dataFiles)
 
     let copy :: FilePath -> Packager ()
         copy path = do
