@@ -1,18 +1,18 @@
 ## Table of Contents
 
 1. [HenHen Config](#henhen-config)
-  1. [name](#name)
-  2. [source-files](#source-files)
-  3. [source-root](#source-root)
-  4. [data-files](#data-files)
-  5. [dependencies](#dependencies)
-  6. [fetch](#fetch)
-  7. [scripts](#scripts)
-  8. [aliases](#aliases)
-  9. [targets](#targets)
+    1. [name](#name)
+    2. [source-files](#source-files)
+    3. [source-root](#source-root)
+    4. [data-files](#data-files)
+    5. [dependencies](#dependencies)
+    6. [fetch](#fetch)
+    7. [scripts](#scripts)
+    8. [aliases](#aliases)
+    9. [targets](#targets)
 2. [Build Targets](#build-targets)
-  1. [Eggs](#eggs)
-  2. [Executables](#executables)
+    1. [Eggs](#eggs)
+    2. [Executables](#executables)
 
 ## HenHen Config
 
