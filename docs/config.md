@@ -26,7 +26,7 @@ The name of your project. This name is used in log messages and error messages, 
 
 A list of patterns for globbing source files, such as:
 
-- `*.scm`    - All .scm files in the current directory.
+- `*.scm`    - All `.scm` files in the current directory.
 - `src/**`   - All files inside the `src` directory.
 - `main.scm` - A `main.scm` file in the current directory.
 
