@@ -27,6 +27,7 @@ dependencies:
 - filepattern >= 0.1.3 && < 0.2
 - typed-process >= 0.2.11.1 && < 0.3
 - time >= 1.12.2 && < 1.13
+- ansi-terminal >= 0.11.5 && < 0.12
 
 ghc-options:
 - -Wall
@@ -60,7 +61,6 @@ executables:
     dependencies:
     - henhen
     - optparse-applicative >= 0.17.1.0 && < 0.18
-    - ansi-terminal >= 0.11.5 && < 0.12
 
 tests:
   henhen-test:
