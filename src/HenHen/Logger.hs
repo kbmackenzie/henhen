@@ -7,7 +7,7 @@ import System.IO
     ( Handle
     , stdout
     , stderr
-    , hPutStr
+    , hPutStrLn
     )
 import System.Console.ANSI
     ( SGR(..)
@@ -28,10 +28,10 @@ printColor handle styles message = liftIO $ do
     if supported
         then do
             hSetSGR handle styles
-            hPutStr handle message
+            hPutStrLn handle message
             hSetSGR handle [Reset]
         else do
-            hPutStr handle message
+            hPutStrLn handle message
 
 getColor :: LogType -> [SGR]
 getColor logType = case logType of
