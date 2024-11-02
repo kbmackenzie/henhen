@@ -25,7 +25,7 @@ source-files:
 dependencies:
 - srfi-1
 targets:
-  simple-egg:
+  simple:
     type: egg
     directory: '.'
 ```
