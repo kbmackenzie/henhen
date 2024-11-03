@@ -20,6 +20,7 @@ import HenHen.Environment
     , localChickenBin
     , localDependencies
     )
+import HenHen.Logger (logMessage)
 import HenHen.Cache (CacheInfo(..), tryGetCache, writeCache)
 import HenHen.Utils.IO
     ( createDirectory
@@ -54,6 +55,7 @@ installDependencies config env cache = do
         install dep = do
             let hasCached = HashSet.member dep (dependencySet cache)
             unless hasCached $ do
+                logMessage (configLogLevel config) ("Installing dependency " ++ show dep)
                 let tasks = fetch config dep
                 mapM_ (runEnvironmentTask config env) tasks
     let dependencies = HashSet.toList (collectDependencies config)
@@ -81,11 +83,13 @@ prepare config env = do
         , localChickenBin
         , localDependencies ]
 
+    logMessage (configLogLevel config) "Preparing..."
     cache      <- fromMaybe emptyCache <$> tryGetCache
     configTime <- getFileModTime configPath
     let outdated = buildTime cache < configTime
 
     when outdated $ do
+        logMessage (configLogLevel config) "Installing dependencies..."
         installDependencies config env cache
         updateCache config
 
