@@ -7,8 +7,19 @@ module HenHen.Environment.Task
 ) where
 
 import HenHen.Packager (Packager, throwError)
+import HenHen.Config (HenHenConfig(..))
+import HenHen.Logger (LogLevel(..))
 import HenHen.Environment.Type (Environment)
-import System.Process.Typed (proc, setEnv, setWorkingDir, runProcess, ExitCode(..))
+import System.Process.Typed
+    ( proc
+    , setEnv
+    , setWorkingDir
+    , runProcess
+    , ExitCode(..)
+    , setStdout
+    , setStderr
+    , nullStream
+    )
 import Data.Maybe (fromMaybe)
 
 data EnvironmentTask = EnvironmentTask
@@ -18,10 +29,13 @@ data EnvironmentTask = EnvironmentTask
     , taskErrorReport :: Maybe (String -> String)
     , afterTask       :: Maybe (Packager ()) }
 
-runEnvironmentTask :: Environment -> EnvironmentTask -> Packager ()
-runEnvironmentTask env task = do
+runEnvironmentTask :: HenHenConfig -> Environment -> EnvironmentTask -> Packager ()
+runEnvironmentTask config env task = do
     let setLocation = maybe id setWorkingDir (taskDirectory task)
-    let setters = setEnv env . setLocation
+    let setStreams  = case configLogLevel config of
+            Verbose -> id
+            _       -> setStdout nullStream . setStderr nullStream
+    let setters = setStreams . setEnv env . setLocation
     let process = setters $ proc (taskCommand task) (taskArguments task)
 
     runProcess process >>= \case

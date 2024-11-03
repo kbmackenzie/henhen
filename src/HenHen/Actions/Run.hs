@@ -48,4 +48,4 @@ run config env name args = do
     let script = HashMap.lookup name (configScripts config)
     case script of
         (Just line) -> runScript env name line
-        Nothing     -> runEnvironmentTask env =<< runBinary name args
+        Nothing     -> runEnvironmentTask config env =<< runBinary name args

@@ -39,5 +39,5 @@ runAction action = do
     case action of
         Build              -> return ()
         (Run name args)    -> run config env name args
-        (Interpret source) -> runEnvironmentTask env (interpret config source)
+        (Interpret source) -> runEnvironmentTask config env (interpret config source)
         (Copy name dest)   -> copy config name dest

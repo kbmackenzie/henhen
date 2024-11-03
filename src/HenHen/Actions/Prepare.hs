@@ -55,7 +55,7 @@ installDependencies config env cache = do
             let hasCached = HashSet.member dep (dependencySet cache)
             unless hasCached $ do
                 let tasks = fetch config dep
-                mapM_ (runEnvironmentTask env) tasks
+                mapM_ (runEnvironmentTask config env) tasks
     let dependencies = HashSet.toList (collectDependencies config)
     mapM_ install dependencies
 

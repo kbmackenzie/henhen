@@ -105,7 +105,7 @@ buildAll config env = do
                 let buildDependencies = foldM deepBuild visitedSelf (getDependencies target)
 
                 visitedDependencies <- buildDependencies
-                runEnvironmentTask env $ build config (self, target)
+                runEnvironmentTask config env $ build config (self, target)
                 return visitedDependencies
 
     foldM_ deepBuild mempty ((HashMap.toList . configTargets) config)
