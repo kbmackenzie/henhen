@@ -1,10 +1,9 @@
 module HenHen.Logger
-( Logger(..)
-, LogType(..)
-, LogLevel(..)
+( LogLevel(..)
 , logMessage
 , logVerbose
-, defaultLogger
+, logWarning
+, logError
 ) where
 
 import Control.Monad (when, unless)
@@ -31,11 +30,6 @@ data LogType = Info | Error | Warning
 data LogLevel = Quiet | Normal | Verbose
     deriving (Eq, Show)
 
-data Logger = Logger
-    { logType  :: LogType
-    , logLevel :: LogLevel }
-    deriving (Eq, Show)
-
 printColor :: (MonadIO m) => Handle -> [SGR] -> String -> m ()
 printColor handle styles message = liftIO $ do
     supported <- hSupportsANSIColor handle
@@ -47,29 +41,37 @@ printColor handle styles message = liftIO $ do
         else do
             hPutStrLn handle message
 
-getColor :: Logger -> [SGR]
-getColor logInfo = case logType logInfo of
+getColor :: LogType -> [SGR]
+getColor logType = case logType of
     Info    -> []
     Error   -> [SetColor Foreground Vivid Red, SetConsoleIntensity BoldIntensity]
     Warning -> [SetColor Foreground Vivid Yellow]
 
-getHandle :: Logger -> Handle
-getHandle logInfo = case logType logInfo of
+getHandle :: LogType -> Handle
+getHandle logType = case logType of
     Info    -> stdout
     Error   -> stderr
     Warning -> stdout
 
-logMessage :: (MonadIO m) => Logger -> String -> m ()
-logMessage logInfo = unless quiet . printColor handle styles
-    where styles = getColor  logInfo
-          handle = getHandle logInfo
-          quiet  = logLevel logInfo == Quiet
+logMessage :: (MonadIO m) => LogLevel -> String -> m ()
+logMessage logLevel = unless quiet . printColor handle styles
+    where styles = getColor  Info
+          handle = getHandle Info
+          quiet  = logLevel == Quiet
 
-logVerbose :: (MonadIO m) => Logger -> String -> m ()
-logVerbose logInfo = when verbose . printColor handle styles
-    where styles  = getColor  logInfo
-          handle  = getHandle logInfo
-          verbose = logLevel logInfo == Verbose
+logVerbose :: (MonadIO m) => LogLevel -> String -> m ()
+logVerbose logLevel = when verbose . printColor handle styles
+    where styles  = getColor  Info
+          handle  = getHandle Info
+          verbose = logLevel == Verbose
 
-defaultLogger :: Logger
-defaultLogger = Logger Info Normal
+logWarning :: (MonadIO m) => LogLevel -> String -> m ()
+logWarning logLevel = unless quiet . printColor handle styles
+    where styles = getColor  Warning
+          handle = getHandle Warning
+          quiet  = logLevel == Quiet
+
+logError :: (MonadIO m) => String -> m ()
+logError = printColor handle styles
+    where styles = getColor  Error
+          handle = getHandle Error
