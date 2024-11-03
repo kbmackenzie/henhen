@@ -8,10 +8,10 @@ import HenHen.Environment
     ( localChicken
     , localBuild
     )
-import HenHen.Utils.IO (removeDirectory)
+import HenHen.Utils.IO (removeDirectoryIfExists)
 
 clean :: Packager ()
-clean = removeDirectory localBuild
+clean = removeDirectoryIfExists localBuild
 
 purge :: Packager ()
-purge = removeDirectory localChicken
+purge = removeDirectoryIfExists localChicken
