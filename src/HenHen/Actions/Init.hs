@@ -4,6 +4,7 @@ module HenHen.Actions.Init
 
 import HenHen.Config (HenHenConfig(..), writeConfig)
 import HenHen.Packager (Packager)
+import HenHen.Logger (LogLevel(..))
 import HenHen.Environment (localChicken)
 import HenHen.Utils.IO (writeFileSafe)
 import HenHen.Utils.String (stringToByteString)
@@ -19,7 +20,8 @@ defaultConfig name = HenHenConfig
     , configFetch     = mempty
     , configScripts   = mempty
     , configAliases   = Nothing
-    , configTargets   = mempty  }
+    , configTargets   = mempty
+    , configLogLevel  = Normal }
 
 gitIgnore :: ByteString
 gitIgnore = stringToByteString (localChicken ++ "\n")

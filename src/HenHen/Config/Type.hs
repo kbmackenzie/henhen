@@ -26,6 +26,7 @@ import Data.Text (Text)
 import Data.HashSet (HashSet)
 import Data.HashMap.Strict (HashMap)
 import HenHen.Utils.Maybe (optional)
+import HenHen.Logger (LogLevel(..))
 import qualified Data.HashMap.Strict as HashMap
 import Data.Function (on)
 import Data.Maybe (fromMaybe)
@@ -41,7 +42,9 @@ data HenHenConfig = HenHenConfig
     , configFetch     :: HashMap String String      -- From where to fetch custom dependencies.
     , configScripts   :: HashMap String String      -- Config scripts.
     , configAliases   :: Maybe Aliases              -- Aliases for CHICKEN Scheme binaries.
-    , configTargets   :: HashMap TargetKey Target } -- Build targets.
+    , configTargets   :: HashMap TargetKey Target   -- Build targets.
+    , configLogLevel  :: LogLevel                   -- Log level; self-explanatory.
+    }
 
 data Aliases = Aliases
     { installerAlias   :: Maybe String
@@ -80,6 +83,7 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "scripts")
         <*> (obj .:? "aliases")
         <*> optional mempty (obj .:? "targets")
+        <*> optional Normal (obj .:? "log-level")
 
 instance ToJSON HenHenConfig where
     toJSON config = object
@@ -91,22 +95,24 @@ instance ToJSON HenHenConfig where
         , "fetch"         .= configFetch config
         , "scripts"       .= configScripts config
         , "aliases"       .= configAliases config 
-        , "targets"       .= HashMap.elems (configTargets config) ]
+        , "targets"       .= HashMap.elems (configTargets config)
+        , "log-level"     .= configLogLevel config ]
 
 ------------------------------------
 -- Pretty-printing:
 ------------------------------------
 configFieldOrderMap :: HashMap Text Int
 configFieldOrderMap = HashMap.fromList
-    [ ("name"          , 1)
-    , ("source-files"  , 2)
-    , ("data-files"    , 3)
-    , ("source-root"   , 4)
-    , ("dependencies"  , 5)
-    , ("fetch"         , 6)
-    , ("scripts"       , 7)
-    , ("aliases"       , 8)
-    , ("targets"       , 9) ]
+    [ ("name"          , 1 )
+    , ("source-files"  , 2 )
+    , ("data-files"    , 3 )
+    , ("source-root"   , 4 )
+    , ("dependencies"  , 5 )
+    , ("fetch"         , 6 )
+    , ("scripts"       , 7 )
+    , ("aliases"       , 8 )
+    , ("targets"       , 9 )
+    , ("log-level"     , 10) ]
 
 configFieldOrder :: Text -> Text -> Ordering
 configFieldOrder = compare `on` (`HashMap.lookup` configFieldOrderMap)
