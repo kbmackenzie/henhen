@@ -8,6 +8,7 @@ module HenHen.Utils.IO
 , globFiles
 , copyFileSafe
 , removeDirectory
+, removeDirectoryIfExists
 , removeFileSafe
 , createFileLinkSafe
 ) where
@@ -104,6 +105,11 @@ removeDirectory path = (liftIO >=> liftEither) $ do
     rm path `catch` \err -> do
         let message = fileError "couldn't remove directory" path err
         return $ Left message
+
+removeDirectoryIfExists :: FilePath -> Packager ()
+removeDirectoryIfExists path = do
+    hasDirectory <- exists Directory path
+    when hasDirectory (removeDirectory path)
 
 removeFileSafe :: FilePath -> Packager ()
 removeFileSafe path = (liftIO >=> liftEither) $ do
