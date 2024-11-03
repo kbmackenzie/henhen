@@ -10,6 +10,7 @@ import HenHen.Environment
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
+import HenHen.Logger (logMessage)
 import HenHen.Utils.FilePath (toExecutablePath)
 import HenHen.Utils.IO (exists, EntryType(..))
 import System.FilePath ((</>))
@@ -47,5 +48,9 @@ run :: HenHenConfig -> Environment -> String -> [String] -> Packager ()
 run config env name args = do
     let script = HashMap.lookup name (configScripts config)
     case script of
-        (Just line) -> runScript env name line
-        Nothing     -> runEnvironmentTask config env =<< runBinary name args
+        (Just line) -> do
+            logMessage (configLogLevel config) ("Running script " ++ show line)
+            runScript env name line
+        Nothing     -> do
+            logMessage (configLogLevel config) ("Running binary " ++ show name)
+            runEnvironmentTask config env =<< runBinary name args

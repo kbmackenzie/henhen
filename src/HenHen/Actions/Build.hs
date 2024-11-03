@@ -23,6 +23,7 @@ import HenHen.Environment
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
+import HenHen.Logger (logMessage)
 import HenHen.Utils.FilePath (toExecutablePath)
 import HenHen.Utils.IO (createFileLinkSafe)
 import System.FilePath ((</>), addExtension)
@@ -102,9 +103,9 @@ buildAll config env = do
             if HashSet.member self visited then return visited else do
                 -- Build all dependencies recursively, in order, storing the new 'visited' set.
                 let visitedSelf = HashSet.insert self visited
-                let buildDependencies = foldM deepBuild visitedSelf (getDependencies target)
+                visitedDependencies <- foldM deepBuild visitedSelf (getDependencies target)
 
-                visitedDependencies <- buildDependencies
+                logMessage (configLogLevel config) ("Building " ++ getKey self)
                 runEnvironmentTask config env $ build config (self, target)
                 return visitedDependencies
 

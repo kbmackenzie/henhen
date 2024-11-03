@@ -7,6 +7,7 @@ import HenHen.Config
     , Target(..)
     , TargetKey(..)
     )
+import HenHen.Logger (logMessage)
 import HenHen.Environment (localChickenBin)
 import HenHen.Packager (Packager, throwError)
 import HenHen.Utils.FilePath (toExecutablePath)
@@ -24,4 +25,8 @@ copy config name destination = do
             (Just (Egg        _ _)) -> throwError (failMessage "target isn't an executable")
             Nothing                 -> throwError (failMessage "no target matches that name")
     let output = destination </> toExecutablePath name
+
+    logMessage (configLogLevel config) . concat $
+        ["Copying binary ", show binary, " to ", show destination]
+
     copyFileSafe binary output
