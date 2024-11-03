@@ -4,6 +4,7 @@ module HenHen.Logger
 , LogLevel(..)
 , logMessage
 , logVerbose
+, defaultLogger
 ) where
 
 import Control.Monad (when, unless)
@@ -69,3 +70,6 @@ logVerbose logInfo = when verbose . printColor handle styles
     where styles  = getColor  logInfo
           handle  = getHandle logInfo
           verbose = logLevel logInfo == Verbose
+
+defaultLogger :: Logger
+defaultLogger = Logger Info Normal
