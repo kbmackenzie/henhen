@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module HenHen.Logger
 ( LogLevel(..)
 , logMessage
@@ -23,12 +25,33 @@ import System.Console.ANSI
     , hSetSGR
     , hSupportsANSIColor
     )
+import Data.Aeson
+    ( FromJSON(..)
+    , ToJSON(..)
+    , withText
+    , Value(String)
+    )
+import qualified Data.Text as Text
 
 data LogType = Info | Error | Warning
     deriving (Eq, Show)
 
 data LogLevel = Quiet | Normal | Verbose
     deriving (Eq, Show)
+
+instance FromJSON LogLevel where
+    parseJSON = withText "LogLevel" $ \text -> case normalize text of
+        "normal"  -> return Normal
+        "quiet"   -> return Quiet
+        "verbose" -> return Verbose
+        other     -> fail ("Unrecognized log level value: " ++ show other)
+        where normalize = Text.toLower . Text.strip
+
+instance ToJSON LogLevel where
+    toJSON logLevel = String $ case logLevel of
+        Normal  -> "normal"
+        Quiet   -> "quiet"
+        Verbose -> "verbose"
 
 printColor :: (MonadIO m) => Handle -> [SGR] -> String -> m ()
 printColor handle styles message = liftIO $ do
