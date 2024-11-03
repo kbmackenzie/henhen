@@ -1,5 +1,5 @@
 module HenHen.Logger
-( LogInfo(..)
+( Logger(..)
 , LogType(..)
 , LogLevel(..)
 , logMessage
@@ -30,7 +30,7 @@ data LogType = Info | Error | Warning
 data LogLevel = Quiet | Normal | Verbose
     deriving (Eq, Show)
 
-data LogInfo = LogInfo
+data Logger = Logger
     { logType  :: LogType
     , logLevel :: LogLevel }
     deriving (Eq, Show)
@@ -46,25 +46,25 @@ printColor handle styles message = liftIO $ do
         else do
             hPutStrLn handle message
 
-getColor :: LogInfo -> [SGR]
+getColor :: Logger -> [SGR]
 getColor logInfo = case logType logInfo of
     Info    -> []
     Error   -> [SetColor Foreground Vivid Red, SetConsoleIntensity BoldIntensity]
     Warning -> [SetColor Foreground Vivid Yellow]
 
-getHandle :: LogInfo -> Handle
+getHandle :: Logger -> Handle
 getHandle logInfo = case logType logInfo of
     Info    -> stdout
     Error   -> stderr
     Warning -> stdout
 
-logMessage :: (MonadIO m) => LogInfo -> String -> m ()
+logMessage :: (MonadIO m) => Logger -> String -> m ()
 logMessage logInfo = unless quiet . printColor handle styles
     where styles = getColor  logInfo
           handle = getHandle logInfo
           quiet  = logLevel logInfo == Quiet
 
-logVerbose :: (MonadIO m) => LogInfo -> String -> m ()
+logVerbose :: (MonadIO m) => Logger -> String -> m ()
 logVerbose logInfo = when verbose . printColor handle styles
     where styles  = getColor  logInfo
           handle  = getHandle logInfo
