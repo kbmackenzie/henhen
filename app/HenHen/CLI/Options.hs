@@ -39,47 +39,59 @@ data HenHenCommand = HenHenCommand
 makeInfo :: Parser a -> String -> ParserInfo a
 makeInfo parser desc = info (parser <**> helper) (fullDesc <> progDesc desc)
 
-parseAction :: Parser Action
-parseAction = subparser . mconcat $ [build, run, init_, install, interpret, copy, clean]
+parseCommand :: Parser HenHenCommand
+parseCommand = subparser actions
     where
-        build :: Mod CommandFields Action
-        build = command "build" $ makeInfo (pure Build) "Build project"
+        actions :: Mod CommandFields HenHenCommand
+        actions = mconcat [build, run, init_, install, interpret, copy, clean]
 
-        run :: Mod CommandFields Action
+        quiet :: Parser Bool
+        quiet = switch (long "quiet"   <> short 'q' <> help "Silence log messages")
+
+        verbose :: Parser Bool
+        verbose = switch (long "verbose" <> short 'v' <> help "Enable verbose mode" )
+
+        build :: Mod CommandFields HenHenCommand
+        build = command "build" $ makeInfo parser "Build project"
+            where action = pure Build
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
+
+        run :: Mod CommandFields HenHenCommand
         run = command "run" $ makeInfo parser "Run binary or script in virtual environment"
-            where parser = Run <$> name <*> args
+            where action = Run <$> name <*> args
                   name   = argument str (metavar "NAME")
                   args   = many (argument str (metavar "ARGS"))
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
-        init_ :: Mod CommandFields Action
+        init_ :: Mod CommandFields HenHenCommand
         init_ = command "init" $ makeInfo parser "Initialize project"
-            where parser = Init <$> name
+            where action = Init <$> name
                   name   = fromMaybe "unnamed" <$> optional (argument str (metavar "NAME"))
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
-        install :: Mod CommandFields Action
+        install :: Mod CommandFields HenHenCommand
         install = command "install" $ makeInfo parser "Install dependency"
-            where parser = Install <$> argument str (metavar "NAME")
+            where action = Install <$> argument str (metavar "NAME")
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
         
-        interpret :: Mod CommandFields Action
+        interpret :: Mod CommandFields HenHenCommand
         interpret = command "interpret" $ makeInfo parser "Interpret script in virtual environment"
-            where parser = Interpret <$> argument str (metavar "PATH")
+            where action = Interpret <$> argument str (metavar "PATH")
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
-        copy :: Mod CommandFields Action
+        copy :: Mod CommandFields HenHenCommand
         copy = command "copy" $ makeInfo parser "Copy executable target"
-            where parser = Copy <$> name <*> dest
+            where action = Copy <$> name <*> dest
                   name   = argument str (metavar "NAME")
                   dest   = fromMaybe "." <$> optional (argument str (metavar "DESTINATION"))
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
-        clean :: Mod CommandFields Action
+        clean :: Mod CommandFields HenHenCommand
         clean = command "clean" $ makeInfo parser "Clean project directory"
-            where parser = Clean <$> purge
+            where action = Clean <$> purge
                   purge  = switch (long "purge" <> short 'p' <> help "Purge virtual environment entirely")
-
-parseCommand :: Parser HenHenCommand
-parseCommand = HenHenCommand <$> parseAction <*> quiet <*> verbose
-    where quiet   = switch (long "quiet"   <> short 'q' <> help "Silence log messages")
-          verbose = switch (long "verbose" <> short 'v' <> help "Enable verbose mode" )
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
 
 getCommand :: IO HenHenCommand
 getCommand = execParser $ info (parseCommand <**> helper)
