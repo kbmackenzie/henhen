@@ -33,11 +33,11 @@ import Data.Aeson
     )
 import qualified Data.Text as Text
 
-data LogType = Info | Error | Warning
-    deriving (Eq, Show)
+data LogType = Info | Warning | Error
+    deriving (Eq, Show, Ord, Enum, Bounded)
 
 data LogLevel = Quiet | Normal | Verbose
-    deriving (Eq, Show)
+    deriving (Eq, Show, Ord, Enum, Bounded)
 
 instance FromJSON LogLevel where
     parseJSON = withText "LogLevel" $ \text -> case normalize text of
