@@ -1,5 +1,6 @@
 module HenHen.CLI.Options
-( getAction
+( HenHenCommand(..)
+, getCommand
 ) where
 
 import HenHen (Action(..))
@@ -29,6 +30,11 @@ import Options.Applicative
     , optional
     )
 import Data.Maybe (fromMaybe)
+
+data HenHenCommand = HenHenCommand
+    { commandAction  :: Action
+    , commandQuiet   :: Bool
+    , commandVerbose :: Bool }
 
 makeInfo :: Parser a -> String -> ParserInfo a
 makeInfo parser desc = info (parser <**> helper) (fullDesc <> progDesc desc)
@@ -68,11 +74,14 @@ parseAction = subparser . mconcat $ [build, run, init_, install, interpret, copy
         clean :: Mod CommandFields Action
         clean = command "clean" $ makeInfo parser "Clean project directory"
             where parser = Clean <$> purge
-                  purge  = switch ( long "purge"
-                                 <> short 'p'
-                                 <> help "Purge virtual environment entirely" )
+                  purge  = switch (long "purge" <> short 'p' <> help "Purge virtual environment entirely")
 
-getAction :: IO Action
-getAction = execParser $ info (parseAction <**> helper)
+parseCommand :: Parser HenHenCommand
+parseCommand = HenHenCommand <$> parseAction <*> quiet <*> verbose
+    where quiet   = switch (long "quiet"   <> short 'q' <> help "Silence log messages")
+          verbose = switch (long "verbose" <> short 'v' <> help "Enable verbose mode" )
+
+getCommand :: IO HenHenCommand
+getCommand = execParser $ info (parseCommand <**> helper)
     ( fullDesc
    <> header "henhen - a build tool for CHICKEN Scheme" )
