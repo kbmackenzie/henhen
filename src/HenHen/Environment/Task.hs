@@ -17,7 +17,6 @@ import System.Process.Typed
     , runProcess
     , ExitCode(..)
     , setStdout
-    , setStderr
     , nullStream
     )
 import Data.Maybe (fromMaybe)
@@ -34,7 +33,7 @@ runEnvironmentTask config env task = do
     let setLocation = maybe id setWorkingDir (taskDirectory task)
     let setStreams  = case configLogLevel config of
             Verbose -> id
-            _       -> setStdout nullStream . setStderr nullStream
+            _       -> setStdout nullStream
     let setters = setStreams . setEnv env . setLocation
     let process = setters $ proc (taskCommand task) (taskArguments task)
 
