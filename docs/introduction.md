@@ -1,6 +1,15 @@
+## Table of Contents
 
+1. [Documentation](#documentation)
+2. [Usage](#usage)
+3. [Command-Line Interface](#command-line-interface)
 
-## Examples
+## Documentation
+
+1. [Config File](./config.md)
+2. [Command-Line Interface Documentation](./cli.md)
+
+## Usage
 
 ### Simple Egg
 
