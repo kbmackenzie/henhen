@@ -18,6 +18,7 @@ module HenHen.Config
 , writeConfig
 , writeAsConfig
 , hasConfig
+, LogLevel(..)
 ) where
 
 import HenHen.Config.Type
@@ -44,4 +45,7 @@ import HenHen.Config.Manage
     , writeConfig
     , writeAsConfig
     , hasConfig
+    )
+import HenHen.Logger
+    ( LogLevel(..)
     )
