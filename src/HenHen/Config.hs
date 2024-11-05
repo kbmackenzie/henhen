@@ -7,6 +7,7 @@ module HenHen.Config
 , getStatus
 , getUninstaller
 , getSourcePath
+, aliasUnion
 , Target(..)
 , TargetKey(..)
 , TargetMeta(..)
@@ -30,6 +31,7 @@ import HenHen.Config.Type
     , getStatus
     , getUninstaller
     , getSourcePath
+    , aliasUnion
     )
 import HenHen.Config.Target
     ( Target(..)

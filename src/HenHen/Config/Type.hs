@@ -11,6 +11,7 @@ module HenHen.Config.Type
 , getStatus
 , getUninstaller
 , getSourcePath
+, aliasUnion
 ) where
 
 import HenHen.Config.Target (Target, TargetKey)
@@ -32,6 +33,7 @@ import Data.Function (on)
 import Data.Maybe (fromMaybe)
 import System.FilePattern (FilePattern)
 import System.FilePath ((</>), normalise)
+import Control.Applicative ((<|>))
 
 data HenHenConfig = HenHenConfig
     { configName      :: Maybe String               -- Project name.
@@ -142,3 +144,11 @@ getUninstaller = getAlias "chicken-uninstall" uninstallerAlias
 
 getSourcePath :: HenHenConfig -> FilePath -> FilePath
 getSourcePath = maybe id ((</>) . normalise) . configSourceDir
+
+aliasUnion :: Aliases -> Aliases -> Aliases
+aliasUnion a b = Aliases
+    { installerAlias   = installerAlias a   <|> installerAlias b
+    , compilerAlias    = compilerAlias a    <|> compilerAlias b
+    , interpreterAlias = interpreterAlias a <|> interpreterAlias b
+    , statusAlias      = statusAlias a      <|> statusAlias b
+    , uninstallerAlias = uninstallerAlias a <|> uninstallerAlias b }
