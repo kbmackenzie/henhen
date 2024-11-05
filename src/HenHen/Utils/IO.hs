@@ -4,6 +4,7 @@ module HenHen.Utils.IO
 , writeFileSafe
 , EntryType(..)
 , exists
+, whenFileExists
 , createDirectory
 , globFiles
 , copyFileSafe
@@ -56,7 +57,6 @@ getFileModTime path = (liftIO >=> liftEither) $ do
         return $ Left message
     return $ fmap (round . utcTimeToPOSIXSeconds) utcTime
 
-
 writeFileSafe :: FilePath -> ByteString -> Packager ()
 writeFileSafe path content = (liftIO >=> liftEither) $ do
     let writer = (fmap Right .) . ByteString.writeFile
@@ -76,6 +76,13 @@ exists entry path = (liftIO >=> liftEither) $ do
     check path `catch` \err -> do
         let message = fileError "couldnt't check existence" path err
         return $ Left message
+
+whenFileExists :: (FilePath -> Packager a) -> FilePath -> Packager (Maybe a)
+whenFileExists action path = do
+    hasFile <- exists File path
+    if hasFile
+        then Just <$> action path
+        else return Nothing
 
 createDirectory :: Bool -> FilePath -> Packager ()
 createDirectory recursive path = (liftIO >=> liftEither) $ do
@@ -114,7 +121,6 @@ removeDirectoryIfExists path = do
 removeFileSafe :: FilePath -> Packager ()
 removeFileSafe path = (liftIO >=> liftEither) $ do
     let rm = fmap Right . removeFile
-    print "removing..."
     rm path `catch` \err -> do
         let message = fileError "couldn't remove file" path err
         return $ Left message
