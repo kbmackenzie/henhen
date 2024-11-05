@@ -14,8 +14,11 @@ module HenHen.Config
 , SourceOptions(..)
 , EggOptions(..)
 , getTargetMeta
-, configPath
-, readConfig
+, projectConfig
+, globalAliases
+, readProjectConfig
+, readGlobalAliases
+, getConfig
 , writeConfig
 , writeAsConfig
 , hasConfig
@@ -42,8 +45,11 @@ import HenHen.Config.Target
     , getTargetMeta
     )
 import HenHen.Config.Manage
-    ( configPath
-    , readConfig
+    ( projectConfig
+    , globalAliases
+    , readProjectConfig
+    , readGlobalAliases
+    , getConfig
     , writeConfig
     , writeAsConfig
     , hasConfig

@@ -8,7 +8,7 @@ import HenHen.Config
     , TargetKey(..)
     , TargetMeta(..)
     , getTargetMeta
-    , configPath
+    , projectConfig
     )
 import HenHen.Packager (Packager)
 import HenHen.Environment
@@ -85,7 +85,7 @@ prepare config env = do
 
     logMessage (configLogLevel config) "Preparing..."
     cache      <- fromMaybe emptyCache <$> tryGetCache
-    configTime <- getFileModTime configPath
+    configTime <- getFileModTime projectConfig
     let outdated = buildTime cache < configTime
 
     when outdated $ do

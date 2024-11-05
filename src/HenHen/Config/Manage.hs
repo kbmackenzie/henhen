@@ -1,28 +1,61 @@
 module HenHen.Config.Manage
-( configPath
-, readConfig
+( projectConfig
+, globalAliases
+, readProjectConfig
+, readGlobalAliases
+, getConfig
 , writeConfig
 , writeAsConfig
 , hasConfig
 ) where
 
-import HenHen.Config.Type (HenHenConfig(..), configFieldOrder)
-import HenHen.Packager (Packager, liftEither, throwError, catchError)
-import HenHen.Utils.IO (readFileSafe, writeFileSafe, exists, EntryType(..))
+import HenHen.Config.Type
+    ( HenHenConfig(..)
+    , Aliases(..)
+    , configFieldOrder
+    , aliasUnion
+    )
+import HenHen.Packager (Packager, liftIO, liftEither, throwError, catchError)
+import HenHen.Utils.IO (readFileSafe, writeFileSafe, exists, EntryType(..), whenFileExists)
 import HenHen.Utils.Yaml (readYaml, prettyYaml)
 import Data.Aeson (ToJSON)
+import System.FilePath ((</>))
+import System.Directory (getHomeDirectory)
+import Control.Monad ((>=>))
 
-configPath :: FilePath
-configPath = "henhen.yaml"
+projectConfig :: FilePath
+projectConfig = "henhen.yaml"
 
-readConfig :: Packager HenHenConfig
-readConfig = do
-    content <- readFileSafe configPath `catchError` \message -> do
-        let newMessage = "Couldn't read config file: " ++ message
+globalAliases :: IO FilePath
+globalAliases = (</> ".henhen-alias.yaml") <$> getHomeDirectory
+
+readProjectConfig :: Packager HenHenConfig
+readProjectConfig = do
+    let readConfig_ :: FilePath -> Packager HenHenConfig
+        readConfig_ = readFileSafe >=> liftEither . readYaml
+
+    readConfig_ projectConfig `catchError` \message -> do
+        let newMessage = "Couldn't read project config: " ++ message
         throwError newMessage
-    liftEither (readYaml content) `catchError` \message -> do
-        let newMessage = "Couldn't parse config file: " ++ message
+
+readGlobalAliases :: Packager (Maybe Aliases)
+readGlobalAliases = do
+    let readAliases :: FilePath -> Packager Aliases
+        readAliases = readFileSafe >=> liftEither . readYaml
+
+    path <- liftIO globalAliases
+    whenFileExists readAliases path `catchError` \message -> do
+        let newMessage = concat ["Couldn't read alias file ", show path, ": ", message]
         throwError newMessage
+
+getConfig :: Packager HenHenConfig
+getConfig = do
+    config  <- readProjectConfig
+    aliases <- readGlobalAliases
+    let combineAliases = Just . maybe id aliasUnion aliases
+    let getAllAliases  = maybe aliases combineAliases . configAliases
+    return config
+        { configAliases = getAllAliases config }
 
 writeConfig :: HenHenConfig -> Packager ()
 writeConfig = writeAsConfig
@@ -30,7 +63,7 @@ writeConfig = writeAsConfig
 writeAsConfig :: (ToJSON a) => a -> Packager ()
 writeAsConfig value = do
     let yaml = prettyYaml configFieldOrder value
-    writeFileSafe configPath yaml
+    writeFileSafe projectConfig yaml
 
 hasConfig :: Packager Bool
-hasConfig = exists File configPath
+hasConfig = exists File projectConfig

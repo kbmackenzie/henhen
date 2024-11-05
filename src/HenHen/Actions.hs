@@ -4,7 +4,7 @@ module HenHen.Actions
 , collectDependencies
 ) where
 
-import HenHen.Config (HenHenConfig(..), readConfig, hasConfig)
+import HenHen.Config (HenHenConfig(..), getConfig, hasConfig)
 import HenHen.Logger (LogLevel(..))
 import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment, runEnvironmentTask)
@@ -33,7 +33,7 @@ runAction (Clean shouldPurge) _ = do
         then (if shouldPurge then purge else clean)
         else throwError "Cannot clean directory: No config file found, possible mistake?"
 runAction action verbosity = do
-    config <- setVerbosity verbosity <$> readConfig
+    config <- setVerbosity verbosity <$> getConfig
     env    <- createEnvironment config
     prepare config env
     buildAll config env
