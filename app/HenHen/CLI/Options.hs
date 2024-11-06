@@ -81,7 +81,7 @@ parseCommand = subparser actions
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
 
         repl :: Mod CommandFields HenHenCommand
-        repl = command "repl" $ makeInfo parser "Run repl"
+        repl = command "repl" $ makeInfo parser "Run repl in virtual environment"
             where parser = HenHenCommand REPL <$> quiet <*> verbose
 
         copy :: Mod CommandFields HenHenCommand
