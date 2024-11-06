@@ -17,6 +17,7 @@ import HenHen.Actions.Interpret (interpret)
 import HenHen.Actions.Install (install)
 import HenHen.Actions.Copy (copy)
 import HenHen.Actions.Type (Action(..))
+import HenHen.Actions.REPL (repl)
 
 runAction :: Action -> Maybe LogLevel -> Packager ()
 runAction (Init name) _ = do
@@ -42,6 +43,7 @@ runAction action verbosity = do
         (Run name args)    -> run config env name args
         (Interpret source) -> runEnvironmentTask config env (interpret config source)
         (Copy name dest)   -> copy config name dest
+        REPL               -> repl config env
 
 setVerbosity :: Maybe LogLevel -> HenHenConfig -> HenHenConfig
 setVerbosity verbosity config = do
