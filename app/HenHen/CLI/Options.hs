@@ -43,7 +43,7 @@ parseCommand :: Parser HenHenCommand
 parseCommand = subparser actions
     where
         actions :: Mod CommandFields HenHenCommand
-        actions = mconcat [build, run, init_, install, interpret, copy, clean]
+        actions = mconcat [build, run, init_, install, interpret, repl, copy, clean]
 
         quiet :: Parser Bool
         quiet = switch (long "quiet"   <> short 'q' <> help "Silence log messages")
@@ -79,6 +79,10 @@ parseCommand = subparser actions
         interpret = command "interpret" $ makeInfo parser "Interpret script in virtual environment"
             where action = Interpret <$> argument str (metavar "PATH")
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
+
+        repl :: Mod CommandFields HenHenCommand
+        repl = command "repl" $ makeInfo parser "Run repl"
+            where parser = HenHenCommand REPL <$> quiet <*> verbose
 
         copy :: Mod CommandFields HenHenCommand
         copy = command "copy" $ makeInfo parser "Copy executable target"
