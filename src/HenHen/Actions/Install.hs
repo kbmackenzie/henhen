@@ -9,11 +9,15 @@ import HenHen.Config
     )
 import HenHen.Packager (Packager)
 import qualified Data.HashSet as HashSet
+import qualified Data.HashMap.Strict as HashMap
 
-install :: String -> Packager ()
-install name = do
+install :: String -> Maybe String -> Packager ()
+install name source = do
     config <- readProjectConfig
-    let newDeps = HashSet.insert name (configDeps config)
-    writeConfig config { configDeps = newDeps }
+    let setSource = maybe id (HashMap.insert name) source
+    let setDeps   = HashSet.insert name
+    writeConfig config
+        { configDeps  = setDeps (configDeps config)
+        , configFetch = setSource (configFetch config) }
     -- Do nothing else: The dependency will be installed next time we build.
     -- The 'prepare' step handles dependencies on its own.

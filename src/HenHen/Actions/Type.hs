@@ -6,11 +6,11 @@ module HenHen.Actions.Type
 
 data Action =
       Build
-    | Run       String [String]     -- name of binary/script to run + argument list
-    | Init      String              -- name of project
-    | Install   String              -- name of dep to install
-    | Interpret FilePath            -- path to script to run
+    | Run       String [String]         -- name of binary/script to run + argument list
+    | Init      String                  -- name of project
+    | Install   String (Maybe String)   -- name of dep to install + optional source url
+    | Interpret FilePath                -- path to script to run
     | REPL
-    | Copy      String FilePath     -- name of binary target and destination to copy to
-    | Clean     Bool                -- "should purge?"
+    | Copy      String FilePath         -- name of binary target and destination to copy to
+    | Clean     Bool                    -- "should purge?"
     deriving (Show)
