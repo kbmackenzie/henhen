@@ -71,9 +71,10 @@ parseCommand = subparser actions
 
         install :: Mod CommandFields HenHenCommand
         install = command "install" $ makeInfo parser "Install dependency"
-            where action = Install <$> argument str (metavar "NAME")
+            where name   = argument str (metavar "NAME")
+                  source = optional $ argument str (metavar "SOURCE")
+                  action = Install <$> name <*> source
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
-
         
         interpret :: Mod CommandFields HenHenCommand
         interpret = command "interpret" $ makeInfo parser "Interpret script in virtual environment"
