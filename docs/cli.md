@@ -63,7 +63,7 @@ Available options:
 ### `henhen install --help`
 
 ```
-Usage: henhen install NAME [-q|--quiet] [-v|--verbose]
+Usage: henhen install NAME [SOURCE] [-q|--quiet] [-v|--verbose]
 
   Install dependency
 
