@@ -16,6 +16,7 @@ Available commands:
   init                     Initialize project
   install                  Install dependency
   interpret                Interpret script in virtual environment
+  repl                     Run repl in virtual environment
   copy                     Copy executable target
   clean                    Clean project directory
 ```
@@ -78,6 +79,19 @@ Available options:
 Usage: henhen interpret PATH [-q|--quiet] [-v|--verbose]
 
   Interpret script in virtual environment
+
+Available options:
+  -q,--quiet               Silence log messages
+  -v,--verbose             Enable verbose mode
+  -h,--help                Show this help text
+```
+
+### `henhen repl --help`
+
+```
+Usage: henhen repl [-q|--quiet] [-v|--verbose]
+
+  Run repl in virtual environment
 
 Available options:
   -q,--quiet               Silence log messages
