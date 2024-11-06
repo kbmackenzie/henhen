@@ -38,6 +38,7 @@ library
       HenHen.Actions.Install
       HenHen.Actions.Interpret
       HenHen.Actions.Prepare
+      HenHen.Actions.REPL
       HenHen.Actions.Run
       HenHen.Actions.Type
       HenHen.Cache.Manage
