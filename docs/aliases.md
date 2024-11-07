@@ -6,6 +6,8 @@ However, depending on how you've installed CHICKEN, tools and utilities may have
 
 To solve this, HenHen supports defining **global aliases** for each CHICKEN tool: alternate names for HenHen to use when invoking those tools through the command-line.
 
+## Defining Global Aliases
+
 To define your global aliases, create a `.henhen-alias.yaml` file in your home directory:
 
 - On Unix, you should create the file inside `$HOME`.
