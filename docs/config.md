@@ -96,26 +96,6 @@ henhen run test
 ```
 **Note:** A script and a target should not have the same name. When there's a name conflict between a script and a target, HenHen will choose to run the script.
 
-### `aliases`
-
-A map where you can define **aliases** for the various CHICKEN commands/binaries.
-
-This is useful if your installation of CHICKEN has different names for the commands/binaries. Some distribution packages will install the interpreter as `chicken-csi` instead of `csi`, for example.
-
-The available fields are:
-
-| Field       | Description                                         |
-|-------------|-----------------------------------------------------|
-| installer   | The installer command. (Default: `chicken-install`) |
-| compiler    | The compiler command. (Default: `csc`)              |
-| interpreter | The interpreter command. (Default: `csi`)           |
-
-```yaml
-aliases:
-  compiler: chicken-csc
-  interpreter: chicken-csi
-```
-
 ### `targets`
 
 A map where you can define the **build targets** for your project.
