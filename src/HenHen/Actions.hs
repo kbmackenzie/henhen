@@ -15,6 +15,7 @@ import HenHen.Actions.Clean (clean, purge)
 import HenHen.Actions.Init (initialize)
 import HenHen.Actions.Interpret (interpret)
 import HenHen.Actions.Install (install)
+import HenHen.Actions.Uninstall (uninstall)
 import HenHen.Actions.Copy (copy)
 import HenHen.Actions.Type (Action(..))
 import HenHen.Actions.REPL (repl)
@@ -28,6 +29,9 @@ runAction (Init name) _ = do
         else initialize name
 runAction (Install name source) verbosity = do
     install name source
+    runAction Build verbosity
+runAction (Uninstall name option) verbosity = do
+    uninstall name option
     runAction Build verbosity
 runAction (Clean shouldPurge) _ = do
     isHenHen <- hasProjectConfig
