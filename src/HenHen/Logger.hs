@@ -76,23 +76,23 @@ getHandle logType = case logType of
     Error   -> stderr
     Warning -> stdout
 
-logMessage :: (MonadIO m) => LogLevel -> String -> m ()
+logMessage :: (MonadIO m) => Maybe LogLevel -> String -> m ()
 logMessage logLevel = unless quiet . printColor handle styles
     where styles = getColor  Info
           handle = getHandle Info
-          quiet  = logLevel == Quiet
+          quiet  = logLevel == Just Quiet
 
-logVerbose :: (MonadIO m) => LogLevel -> String -> m ()
+logVerbose :: (MonadIO m) => Maybe LogLevel -> String -> m ()
 logVerbose logLevel = when verbose . printColor handle styles
     where styles  = getColor  Info
           handle  = getHandle Info
-          verbose = logLevel == Verbose
+          verbose = logLevel == Just Verbose
 
-logWarning :: (MonadIO m) => LogLevel -> String -> m ()
+logWarning :: (MonadIO m) => Maybe LogLevel -> String -> m ()
 logWarning logLevel = unless quiet . printColor handle styles
     where styles = getColor  Warning
           handle = getHandle Warning
-          quiet  = logLevel == Quiet
+          quiet  = logLevel == Just Quiet
 
 logError :: (MonadIO m) => String -> m ()
 logError = printColor handle styles

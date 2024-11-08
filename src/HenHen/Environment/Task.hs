@@ -32,8 +32,8 @@ runEnvironmentTask :: HenHenConfig -> Environment -> EnvironmentTask -> Packager
 runEnvironmentTask config env task = do
     let setLocation = maybe id setWorkingDir (taskDirectory task)
     let setStreams  = case configLogLevel config of
-            Verbose -> id
-            _       -> setStdout nullStream
+            (Just Verbose) -> id
+            _              -> setStdout nullStream
     let setters = setStreams . setEnv env . setLocation
     let process = setters $ proc (taskCommand task) (taskArguments task)
 

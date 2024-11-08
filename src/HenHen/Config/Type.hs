@@ -45,7 +45,7 @@ data HenHenConfig = HenHenConfig
     , configScripts   :: HashMap String String      -- Config scripts.
     , configAliases   :: Maybe Aliases              -- Aliases for CHICKEN Scheme binaries.
     , configTargets   :: HashMap TargetKey Target   -- Build targets.
-    , configLogLevel  :: LogLevel                   -- Log level; self-explanatory.
+    , configLogLevel  :: Maybe LogLevel             -- Log level; self-explanatory.
     }
 
 data Aliases = Aliases
@@ -85,7 +85,7 @@ instance FromJSON HenHenConfig where
         <*> optional mempty (obj .:? "scripts")
         <*> (obj .:? "aliases")
         <*> optional mempty (obj .:? "targets")
-        <*> optional Normal (obj .:? "log-level")
+        <*> (obj .:? "log-level")
 
 instance ToJSON HenHenConfig where
     toJSON config = object

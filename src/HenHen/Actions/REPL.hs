@@ -20,7 +20,7 @@ repl config env = do
     let failMessage :: String -> String
         failMessage message = "Failure when running REPL: " ++ message
 
-    let replConfig = config { configLogLevel = Verbose }
+    let replConfig = config { configLogLevel = Just Verbose }
     runEnvironmentTask replConfig env $ EnvironmentTask
         { taskCommand     = interpreter
         , taskArguments   = []

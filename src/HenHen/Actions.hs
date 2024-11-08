@@ -18,6 +18,7 @@ import HenHen.Actions.Install (install)
 import HenHen.Actions.Copy (copy)
 import HenHen.Actions.Type (Action(..))
 import HenHen.Actions.REPL (repl)
+import Control.Applicative ((<|>))
 
 runAction :: Action -> Maybe LogLevel -> Packager ()
 runAction (Init name) _ = do
@@ -47,5 +48,4 @@ runAction action verbosity = do
 
 setVerbosity :: Maybe LogLevel -> HenHenConfig -> HenHenConfig
 setVerbosity verbosity config = do
-    let setter = maybe id const verbosity
-    config { configLogLevel = setter (configLogLevel config) }
+    config { configLogLevel = verbosity <|> configLogLevel config }
