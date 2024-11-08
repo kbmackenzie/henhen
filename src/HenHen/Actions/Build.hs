@@ -88,6 +88,9 @@ buildAll :: HenHenConfig -> Environment -> Packager ()
 buildAll config env = do
     let targetMap = configTargets config
 
+    let project = fromMaybe "unnamed" (configName config)
+    logMessage (configLogLevel config) ("Building project " ++ show project)
+
     let getDependencies :: Target -> [(TargetKey, Target)]
         getDependencies target = do
             -- Note: Dependencies that aren't targets are handled elsewhere.
