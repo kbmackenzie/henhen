@@ -1,15 +1,56 @@
 ## Table of Contents
 
 1. [Documentation](#documentation)
-2. [Usage](#usage)
-3. [Command-Line Interface](#command-line-interface)
+3. [Quick Start](#quick-start)
+2. [Configuration](#configuration)
 
 ## Documentation
 
-1. [Config File](./config.md)
-2. [Command-Line Interface Documentation](./cli.md)
+To learn more in-depth about HenHen, see the documentation:
 
-## Usage
+1. [Configuration File](./config.md)
+2. [Command-Line Interface](./cli.md)
+3. [Defining Aliases For Tools](./aliases.md)
+4. [Frequently Asked Questions](./faq.md)
+
+## Quick Start
+
+HenHen's command-line interface is quite simple:
+
+```bash
+# Create a new project:
+henhen init "project name"
+
+# Build a project:
+henhen build
+
+# Run an executable target (or a config script):
+henhen run "target-name"
+
+# Interpret a script in the virtual environment:
+henhen interpret "path-to-script"
+
+# Run a REPL in the virtual environment:
+henhen repl
+
+# Install an egg, appending it to the 'dependencies' field in your config file:
+henhen install "dependency-name"
+
+# Erase virtual environment entirely; start with a clean slate:
+henhen clean --purge
+```
+
+To learn more, see the [command-line interface documentation](./config.md)!
+
+As a simple example, let's create a new project, install the monad egg and run a REPL in the virtual environment:
+
+```bash
+henhen init "lolcat"
+henhen install shlolcat
+henhen repl
+```
+
+## Configuration
 
 ### Simple Egg
 
