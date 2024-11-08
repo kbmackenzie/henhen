@@ -22,6 +22,7 @@ The available fields are:
 | installer   | The CHICKEN package manager. (Default: `chicken-install`) |
 | compiler    | The CHICKEN compiler. (Default: `csc`)                    |
 | interpreter | The CHICKEN interpreter. (Default: `csi`)                 |
+| uninstaller | (Default: `chicken-uninstall`)                            |
 
 As an example, for an user who has installed CHICKEN through the [official Arch repositories][3], their global alias configuration should look like this:
 
@@ -29,6 +30,7 @@ As an example, for an user who has installed CHICKEN through the [official Arch 
 installer: chicken-install
 compiler: chicken-csc
 interpreter: chicken-csi
+uninstaller: chicken-uninstall
 ```
 
 [1]: http://wiki.call-cc.org/man/5/Using%20the%20interpreter
