@@ -20,7 +20,7 @@ The top-level fields you can define in your `henhen.yaml` config file are:
 
 ### `name`
 
-The name of your project. This name is used in log messages and error messages, but does not currently have much value otherwise.
+The name of your project. This field is **optional**: the name is used in log messages and error messages, but does not currently have much value otherwise.
 
 ### `source-files`
 
