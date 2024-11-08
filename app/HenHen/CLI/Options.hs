@@ -43,7 +43,7 @@ parseCommand :: Parser HenHenCommand
 parseCommand = subparser actions
     where
         actions :: Mod CommandFields HenHenCommand
-        actions = mconcat [build, run, init_, install, interpret, repl, copy, clean]
+        actions = mconcat [build, run, init_, install, uninstall, interpret, repl, copy, clean]
 
         quiet :: Parser Bool
         quiet = switch (long "quiet"   <> short 'q' <> help "Silence log messages")
@@ -74,6 +74,13 @@ parseCommand = subparser actions
             where name   = argument str (metavar "NAME")
                   source = optional $ argument str (metavar "SOURCE")
                   action = Install <$> name <*> source
+                  parser = HenHenCommand <$> action <*> quiet <*> verbose
+
+        uninstall :: Mod CommandFields HenHenCommand
+        uninstall = command "uninstall" $ makeInfo parser "Remove dependency"
+            where name   = argument str (metavar "NAME")
+                  option = switch (long "fetch" <> short 'f' <> help "Remove key from fetch map")
+                  action = Uninstall <$> name <*> option
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
         
         interpret :: Mod CommandFields HenHenCommand
