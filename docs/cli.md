@@ -15,6 +15,7 @@ Available commands:
   run                      Run binary or script in virtual environment
   init                     Initialize project
   install                  Install dependency
+  uninstall                Remove dependency
   interpret                Interpret script in virtual environment
   repl                     Run repl in virtual environment
   copy                     Copy executable target
@@ -68,6 +69,20 @@ Usage: henhen install NAME [SOURCE] [-q|--quiet] [-v|--verbose]
   Install dependency
 
 Available options:
+  -q,--quiet               Silence log messages
+  -v,--verbose             Enable verbose mode
+  -h,--help                Show this help text
+```
+
+### `henhen uninstall --help`
+
+```
+Usage: henhen uninstall NAME [-f|--fetch] [-q|--quiet] [-v|--verbose]
+
+  Remove dependency
+
+Available options:
+  -f,--fetch               Remove key from fetch map
   -q,--quiet               Silence log messages
   -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
