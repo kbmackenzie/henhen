@@ -66,7 +66,7 @@ parseCommand = subparser actions
         init_ :: Mod CommandFields HenHenCommand
         init_ = command "init" $ makeInfo parser "Initialize project"
             where action = Init <$> name
-                  name   = fromMaybe "unnamed" <$> optional (argument str (metavar "NAME"))
+                  name   = optional (argument str (metavar "NAME"))
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
 
         install :: Mod CommandFields HenHenCommand
