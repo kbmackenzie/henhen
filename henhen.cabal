@@ -41,6 +41,7 @@ library
       HenHen.Actions.REPL
       HenHen.Actions.Run
       HenHen.Actions.Type
+      HenHen.Actions.Uninstall
       HenHen.Cache.Manage
       HenHen.Cache.Type
       HenHen.Config.Manage
