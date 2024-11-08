@@ -38,7 +38,9 @@ generateConfigDeps topLevelDeps targetDeps = do
         , configFetch     = mempty
         , configScripts   = mempty
         , configAliases   = Nothing
-        , configTargets   = HashMap.fromList targets }
+        , configTargets   = HashMap.fromList targets
+        , configLogLevel  = Nothing
+        }
 
 dependencies :: Spec
 dependencies = describe "collect dependencies from config" $ do
