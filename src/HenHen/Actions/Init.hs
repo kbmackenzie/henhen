@@ -2,7 +2,7 @@ module HenHen.Actions.Init
 ( initialize
 ) where
 
-import HenHen.Config (HenHenConfig(..), writeConfig)
+import HenHen.Config (HenHenConfig(..), writeProjectConfig)
 import HenHen.Packager (Packager)
 import HenHen.Environment (localChicken)
 import HenHen.Utils.IO (writeFileSafe)
@@ -27,5 +27,5 @@ gitIgnore = stringToByteString (localChicken ++ "\n")
 
 initialize :: String -> Packager ()
 initialize name = do
-    writeConfig (defaultConfig name)
+    writeProjectConfig (defaultConfig name)
     writeFileSafe ".gitignore" gitIgnore

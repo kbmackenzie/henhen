@@ -4,7 +4,7 @@ module HenHen.Actions
 , collectDependencies
 ) where
 
-import HenHen.Config (HenHenConfig(..), getConfig, hasConfig)
+import HenHen.Config (HenHenConfig(..), getConfig, hasProjectConfig)
 import HenHen.Logger (LogLevel(..))
 import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment, runEnvironmentTask)
@@ -22,7 +22,7 @@ import Control.Applicative ((<|>))
 
 runAction :: Action -> Maybe LogLevel -> Packager ()
 runAction (Init name) _ = do
-    isHenHen <- hasConfig
+    isHenHen <- hasProjectConfig
     if isHenHen
         then throwError "There's already a project in the current directory!"
         else initialize name
@@ -30,7 +30,7 @@ runAction (Install name source) verbosity = do
     install name source
     runAction Build verbosity
 runAction (Clean shouldPurge) _ = do
-    isHenHen <- hasConfig
+    isHenHen <- hasProjectConfig
     if isHenHen
         then (if shouldPurge then purge else clean)
         else throwError "Cannot clean directory: No config file found, possible mistake?"

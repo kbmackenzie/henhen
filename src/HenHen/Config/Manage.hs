@@ -4,9 +4,8 @@ module HenHen.Config.Manage
 , readProjectConfig
 , readGlobalAliases
 , getConfig
-, writeConfig
-, writeAsConfig
-, hasConfig
+, hasProjectConfig
+, writeProjectConfig
 ) where
 
 import HenHen.Config.Type
@@ -57,13 +56,13 @@ getConfig = do
     return config
         { configAliases = getAllAliases config }
 
-writeConfig :: HenHenConfig -> Packager ()
-writeConfig = writeAsConfig
+writeProjectConfig :: HenHenConfig -> Packager ()
+writeProjectConfig = writeAsProjectConfig
 
-writeAsConfig :: (ToJSON a) => a -> Packager ()
-writeAsConfig value = do
+writeAsProjectConfig :: (ToJSON a) => a -> Packager ()
+writeAsProjectConfig value = do
     let yaml = prettyYaml configFieldOrder value
     writeFileSafe projectConfig yaml
 
-hasConfig :: Packager Bool
-hasConfig = exists File projectConfig
+hasProjectConfig :: Packager Bool
+hasProjectConfig = exists File projectConfig

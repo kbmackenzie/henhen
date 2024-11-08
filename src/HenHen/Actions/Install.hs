@@ -4,8 +4,8 @@ module HenHen.Actions.Install
 
 import HenHen.Config
     ( HenHenConfig(..)
-    , writeConfig
     , readProjectConfig
+    , writeProjectConfig
     )
 import HenHen.Packager (Packager)
 import qualified Data.HashSet as HashSet
@@ -16,7 +16,7 @@ install name source = do
     config <- readProjectConfig
     let setSource = maybe id (HashMap.insert name) source
     let setDeps   = HashSet.insert name
-    writeConfig config
+    writeProjectConfig config
         { configDeps  = setDeps (configDeps config)
         , configFetch = setSource (configFetch config) }
     -- Do nothing else: The dependency will be installed next time we build.

@@ -19,9 +19,8 @@ module HenHen.Config
 , readProjectConfig
 , readGlobalAliases
 , getConfig
-, writeConfig
-, writeAsConfig
-, hasConfig
+, writeProjectConfig
+, hasProjectConfig
 , LogLevel(..)
 ) where
 
@@ -50,9 +49,8 @@ import HenHen.Config.Manage
     , readProjectConfig
     , readGlobalAliases
     , getConfig
-    , writeConfig
-    , writeAsConfig
-    , hasConfig
+    , hasProjectConfig
+    , writeProjectConfig
     )
 import HenHen.Logger
     ( LogLevel(..)
