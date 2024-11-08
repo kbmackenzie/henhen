@@ -97,7 +97,7 @@ instance ToJSON HenHenConfig where
         , "fetch"         .= configFetch config
         , "scripts"       .= configScripts config
         , "aliases"       .= configAliases config 
-        , "targets"       .= HashMap.elems (configTargets config)
+        , "targets"       .= configTargets config
         , "log-level"     .= configLogLevel config ]
 
 ------------------------------------
