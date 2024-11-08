@@ -9,9 +9,9 @@ import HenHen.Utils.IO (writeFileSafe)
 import HenHen.Utils.String (stringToByteString)
 import Data.ByteString (ByteString)
 
-defaultConfig :: String -> HenHenConfig
+defaultConfig :: Maybe String -> HenHenConfig
 defaultConfig name = HenHenConfig
-    { configName      = Just name
+    { configName      = name
     , configSources   = ["*.scm", "*.egg"]
     , configDataFiles = []
     , configSourceDir = Nothing
@@ -25,7 +25,7 @@ defaultConfig name = HenHenConfig
 gitIgnore :: ByteString
 gitIgnore = stringToByteString (localChicken ++ "\n")
 
-initialize :: String -> Packager ()
+initialize :: Maybe String -> Packager ()
 initialize name = do
     writeProjectConfig (defaultConfig name)
     writeFileSafe ".gitignore" gitIgnore

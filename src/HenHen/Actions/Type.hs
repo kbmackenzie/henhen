@@ -7,7 +7,7 @@ module HenHen.Actions.Type
 data Action =
       Build
     | Run       String [String]         -- name of binary/script to run + argument list
-    | Init      String                  -- name of project
+    | Init      (Maybe String)          -- name of project
     | Install   String (Maybe String)   -- name of dep to install + optional source url
     | Uninstall String Bool             -- name of dep to uninstall + "should clean fetch map?"
     | Interpret FilePath                -- path to script to run
