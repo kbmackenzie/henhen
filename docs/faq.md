@@ -21,3 +21,9 @@
 **Q:** *"Why use YAML for the configuration file instead of just using Scheme?*
 
 **A:** Again, preference. YAML is more convenient.
+
+---
+
+**Q:** *"I have encountered an issue/bug with HenHen! What do I do?"*
+
+**A:** Feel free to open an issue on this repository and I will take a look at it as soon as I can! 🐔
