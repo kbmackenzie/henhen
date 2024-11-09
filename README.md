@@ -34,14 +34,9 @@ The guide linked above also includes steps to build HenHen from source!
 
 ## Documentation
 
-An introduction + a **tutorial** for HenHen can be found on [here](./docs/introduction.md)!
+An introduction to HenHen can be found on [this section](#quick-start)!
 
-To learn more about HenHen, read the documentation:
-
-1. [Configuration File](./docs/config.md)
-2. [Command-Line Interface](./docs/cli.md)
-3. [Defining Aliases For Tools](./docs/aliases.md)
-4. [Frequently Asked Questions](./docs/faq.md)
+To learn more about HenHen, [read the documentation](./docs/introduction.md)! 🐔
 
 ## Quick Start
 
@@ -54,7 +49,7 @@ henhen init "your project name"
 This will create a `henhen.yaml` file populated with basic fields. This is the **configuration file** for your project, where you can...
 
 - ... list dependencies to be installed.
-- ... define custom URLs to fetch certain dependencies from.
+- ... define [git][3] repository URLs to fetch custom dependencies from.
 - ... define **targets** to build. A **target** can be an **egg** or a static binary **executable**.
 
 A simple config file to build a simple egg should look like this:
@@ -116,6 +111,28 @@ targets:
     - foo
     - bar
 ```
+
+After writing our project configuration, all we need to do is **build** our project:
+
+```bash
+henhen build
+```
+
+And we can run the static `foobar` binary inside the virtual environment!
+
+```bash
+henhen run foobar
+```
+
+We want to distribute that binary executable, so let's copy it to our project root:
+
+```bash
+henhen copy foobar
+```
+
+And we can share it! 🐔
+
+To learn more, [read the documentation](./docs/introduction.md)!
 
 [1]: http://wiki.call-cc.org/releasing-your-egg#publishing-your-egg
 [2]: http://wiki.call-cc.org/man/5/Extension%20tools#security
