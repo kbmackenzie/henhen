@@ -18,7 +18,7 @@
 
 ---
 
-**Q:** *"Why use YAML for the configuration file instead of just using Scheme?*
+**Q:** *"Why use YAML for the configuration file instead of just using Scheme?"*
 
 **A:** Again, preference. YAML is more convenient.
 
