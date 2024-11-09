@@ -1,10 +1,8 @@
 ## Frequently Asked Questions
 
----
-
 **Q:** *"Does HenHen replace `chicken-install`?"*
 
-**A:** No, HenHen does *not* replace `chicken-install`. Quite the opposite: HenHen *calls* `chicken-install` in a special environment. The two are designed to work together.
+**A:** No, HenHen does *not* replace `chicken-install`. Quite the opposite: HenHen *invokes* `chicken-install` in a special environment to install eggs!
 
 ---
 
