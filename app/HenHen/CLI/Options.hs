@@ -57,7 +57,7 @@ parseCommand = subparser actions
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
 
         run :: Mod CommandFields HenHenCommand
-        run = command "run" $ makeInfo parser "Run binary or script in virtual environment"
+        run = command "run" $ makeInfo parser "Run a target or config script in virtual environment"
             where action = Run <$> name <*> args
                   name   = argument str (metavar "NAME")
                   args   = many (argument str (metavar "ARGS"))
@@ -84,12 +84,12 @@ parseCommand = subparser actions
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
         
         interpret :: Mod CommandFields HenHenCommand
-        interpret = command "interpret" $ makeInfo parser "Interpret script in virtual environment"
+        interpret = command "interpret" $ makeInfo parser "Interpret a Scheme script in virtual environment"
             where action = Interpret <$> argument str (metavar "PATH")
                   parser = HenHenCommand <$> action <*> quiet <*> verbose
 
         repl :: Mod CommandFields HenHenCommand
-        repl = command "repl" $ makeInfo parser "Run repl in virtual environment"
+        repl = command "repl" $ makeInfo parser "Run the CHICKEN REPL in virtual environment"
             where parser = HenHenCommand REPL <$> quiet <*> verbose
 
         copy :: Mod CommandFields HenHenCommand
