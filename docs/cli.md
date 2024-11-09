@@ -1,6 +1,16 @@
 ## Command-Line Interface
 
-### `henhen --help`
+HenHen has a nice, simple command-line interface for building and managing projects. All available commands are documented below!
+
+1. [build](#henhen-build)
+2. [run](#henhen-run)
+3. [init](#henhen-init)
+4. [install](#henhen-install)
+5. [uninstall](#henhen-uninstall)
+6. [interpret](#henhen-interpret)
+7. [repl](#henhen-repl)
+8. [copy](#henhen-copy)
+9. [clean](#henhen-clean)
 
 ```
 henhen - a build tool for CHICKEN Scheme
@@ -12,17 +22,19 @@ Available options:
 
 Available commands:
   build                    Build project
-  run                      Run binary or script in virtual environment
+  run                      Run a target or config script in virtual environment
   init                     Initialize project
   install                  Install dependency
   uninstall                Remove dependency
-  interpret                Interpret script in virtual environment
-  repl                     Run repl in virtual environment
+  interpret                Interpret a Scheme script in virtual environment
+  repl                     Run the CHICKEN REPL in virtual environment
   copy                     Copy executable target
   clean                    Clean project directory
 ```
 
-### `henhen build --help`
+### `henhen build`
+
+Build the project in the current directory.
 
 ```
 Usage: henhen build [-q|--quiet] [-v|--verbose]
@@ -35,12 +47,18 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen run --help`
+### `henhen run`
+
+Run something inside the virtual environment. That 'something' can be...
+
+- ... a [binary executable target defined in your configuration file](./config.md#build-targets).
+- ... an [executable component of an installed egg][1].
+- ... a script defined in the [`scripts` field of your configuration file.](./config.md#scripts)
 
 ```
 Usage: henhen run NAME [ARGS] [-q|--quiet] [-v|--verbose]
 
-  Run binary or script in virtual environment
+  Run a target or config script in virtual environment
 
 Available options:
   -q,--quiet               Silence log messages
@@ -48,7 +66,11 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen init --help`
+### `henhen init`
+
+Initialize a Henhen project in the current directory.
+
+This creates a `henhen.yaml` file and a `.gitignore` file.
 
 ```
 Usage: henhen init [NAME] [-q|--quiet] [-v|--verbose]
@@ -61,7 +83,17 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen install --help`
+### `henhen install`
+
+Add a new dependency to your project.
+
+It accepts two arguments:
+- The dependency egg's name.
+- An optional [git][2] repository URL to fetch from.
+
+When the second argument is provided, the repository URL is added to the `fetch` field in the configuration file.
+
+You can also specify the **version** of an egg by using a colon (`:`) after the egg's name (in the same way you would do with `chicken-install`).
 
 ```
 Usage: henhen install NAME [SOURCE] [-q|--quiet] [-v|--verbose]
@@ -74,7 +106,13 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen uninstall --help`
+### `henhen uninstall`
+
+Remove a dependency from your project configuration.
+
+This command **does not invoke `chicken-uninstall`**, contrary to what you might expect. All it does is politely remove that dependency from your configuration file. If you want to truly purge all unused dependencies from your virtual environment, it's best to do spring cleaning: run `henhen clean --purge && henhen build` to erase the virtual environment and start fresh, building your project all over again.
+
+**Note:** This command does not affect build targets' `dependencies` field.
 
 ```
 Usage: henhen uninstall NAME [-f|--fetch] [-q|--quiet] [-v|--verbose]
@@ -88,12 +126,14 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen interpret --help`
+### `henhen interpret`
+
+Interpret a CHICKEN Scheme script in the virtual environment.
 
 ```
 Usage: henhen interpret PATH [-q|--quiet] [-v|--verbose]
 
-  Interpret script in virtual environment
+  Interpret a Scheme script in virtual environment
 
 Available options:
   -q,--quiet               Silence log messages
@@ -101,12 +141,14 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen repl --help`
+### `henhen repl`
+
+Run the CHICKEN REPL in the virtual environment.
 
 ```
 Usage: henhen repl [-q|--quiet] [-v|--verbose]
 
-  Run repl in virtual environment
+  Run the CHICKEN REPL in virtual environment
 
 Available options:
   -q,--quiet               Silence log messages
@@ -114,7 +156,16 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen copy --help`
+### `henhen copy`
+
+When [build targets of `type: executable`](./config.md#executables) are built, static binaries are generated in `.henhen/_build` and symlinks are created in `.henhen/bin`.
+
+This utility command copies a generated binary from `.henhen/_build` to a specified directory. It accepts two arguments:
+
+- The name of a build target.
+- An optional second argument specifying the directory to copy the generated binary to.
+
+When no second argument is given, this command simply copies the binary to the project's root directory.
 
 ```
 Usage: henhen copy NAME [DESTINATION] [-q|--quiet] [-v|--verbose]
@@ -127,7 +178,11 @@ Available options:
   -h,--help                Show this help text
 ```
 
-### `henhen clean --help`
+### `henhen clean`
+
+Clean the build cache. Next time you build the project, all build targets will be re-built from scratch.
+
+When the `--purge` option is given, this command becomes much more aggressive: it removes the `.henhen` directory entirely, erasing the virtual environment. When you want to start fresh (i.e. re-install all dependencies, re-build everything), this is the option you want to use.
 
 ```
 Usage: henhen clean [-p|--purge] [-q|--quiet] [-v|--verbose]
@@ -140,3 +195,6 @@ Available options:
   -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
+
+[1]: https://wiki.call-cc.org/man/5/Egg%20specification%20format#program
+[2]: https://git-scm.com/
