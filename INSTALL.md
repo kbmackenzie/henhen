@@ -24,7 +24,7 @@ The simplest way to install/use Mewlix on Windows is:
 
 If you wish to temporarily add the directory to your PATH for a running `cmd` instance, you can do:
 ```cmd
-set "PATH=%PATH%;C:\your-mewlix-folder\"
+set "PATH=%PATH%;C:\your-henhen-folder\"
 ```
 These changes will only apply to that instance of `cmd`, and will not affect the system as a whole.
 
