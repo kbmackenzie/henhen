@@ -2,7 +2,7 @@ HenHen is a build tool for CHICKEN Scheme, designed to work alongside `chicken-i
 
 - Install dependencies in an **isolated virtual environment**. No more system-wide installs!
 - Manage multiple local eggs seamlessly, and build them together.
-- Fetch and install dependencies from **anywhere** by specifying an URL. No need to rely entirely on the [official egg index][1]!
+- Fetch and install dependencies from **anywhere** by specifying a [git][3] repository URL for each one. No need to rely entirely on the [official egg index][1]!
 
 It creates an isolated egg repository for each project inside a `.henhen` folder.
 
@@ -119,3 +119,4 @@ targets:
 
 [1]: http://wiki.call-cc.org/releasing-your-egg#publishing-your-egg
 [2]: http://wiki.call-cc.org/man/5/Extension%20tools#security
+[3]: https://git-scm.com/
