@@ -69,6 +69,13 @@ dependencies:
 - srfi-13
 ```
 
+Additionally, when you list a dependency, you can specify its version with a colon (`:`), like so:
+
+```yaml
+dependencies:
+- monad:5.1
+```
+
 ### `fetch`
 
 A map associating custom dependency keys with their respective source URLs. All custom dependency URLs should point to Git repositories.
