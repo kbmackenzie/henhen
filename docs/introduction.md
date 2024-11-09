@@ -1,12 +1,12 @@
-## Table of Contents
+HenHen is a build too for CHICKEN Scheme. It manages isolated virtual environments on a per-project basis, and it can install dependencies from any [git][1] repository URL.
 
-6. [Next Steps](#next-steps)
+All documentation can be found below! 🐔
 
-## Next Steps
-
-To learn more in-depth about HenHen, see the documentation:
+## Documentation
 
 1. [Configuration File](./config.md)
 2. [Command-Line Interface](./cli.md)
 3. [Defining Aliases For Tools](./aliases.md)
 4. [Frequently Asked Questions](./faq.md)
+
+[1]: https://git-scm.com/
