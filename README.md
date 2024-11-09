@@ -1,3 +1,5 @@
+<img align="left" width="256" height="256" src="logo.svg" alt="HenHen logo">
+
 HenHen is a build tool for CHICKEN Scheme, designed to work alongside `chicken-install`. It can:
 
 - Install dependencies in an **isolated virtual environment**. No more system-wide installs!
