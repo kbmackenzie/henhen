@@ -7,7 +7,7 @@ module HenHen.Actions
 import HenHen.Config (HenHenConfig(..), getConfig, hasProjectConfig)
 import HenHen.Logger (LogLevel(..))
 import HenHen.Packager (Packager, throwError)
-import HenHen.Environment (createEnvironment, runEnvironmentTask)
+import HenHen.Environment (createEnvironment)
 import HenHen.Actions.Build (buildAll)
 import HenHen.Actions.Run (run)
 import HenHen.Actions.Prepare (prepare, collectDependencies)
@@ -46,7 +46,7 @@ runAction action verbosity = do
     case action of
         Build              -> return ()
         (Run name args)    -> run config env name args
-        (Interpret source) -> runEnvironmentTask config env (interpret config source)
+        (Interpret source) -> interpret config env source
         (Copy name dest)   -> copy config name dest
         REPL               -> repl config env
 
