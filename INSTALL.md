@@ -16,7 +16,7 @@ cp henhen ~/.local/bin/
 
 ### Windows
 
-The simplest way to install/use Mewlix on Windows is: 
+The simplest way to install/use HenHen on Windows is: 
 
 1. Download the `henhen.exe` executable.
 2. Place it in a new directory.
