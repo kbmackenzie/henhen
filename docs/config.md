@@ -1,6 +1,6 @@
 ## Table of Contents
 
-1. [Config File](#config-file)
+1. [Configuration File](#configuration-file)
     1. [name](#name)
     2. [source-files](#source-files)
     3. [source-root](#source-root)
@@ -14,7 +14,7 @@
     1. [Eggs](#eggs)
     2. [Executables](#executables)
 
-## Config File
+## Configuration File
 
 The top-level fields you can define in your `henhen.yaml` config file are:
 
