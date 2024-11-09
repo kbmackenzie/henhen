@@ -12,7 +12,8 @@ With HenHen, you can experiment with eggs all you want without polluting your gl
 
 1. [Philosophy](#philosophy)
 2. [Installation](#installation)
-3. [B
+3. [Documentation](#documentation)
+4. [Quick Start](#quick-start)
 
 ## Philosophy
 
@@ -28,6 +29,91 @@ HenHen is designed to circumvent **both of these issues** with as little hassle 
 HenHen is a single binary executable. A comprehensive installation guide can be found [here](./INSTALL.md).
 
 The guide linked above also includes steps to build HenHen from source!
+
+## Documentation
+
+An introduction + a **tutorial** for HenHen can be found on [here](./docs/introduction.md)!
+
+To learn more about HenHen, read the documentation:
+
+1. [Configuration File](./docs/config.md)
+2. [Command-Line Interface](./docs/cli.md)
+3. [Defining Aliases For Tools](./docs/aliases.md)
+4. [Frequently Asked Questions](./docs/faq.md)
+
+## Quick Start
+
+To initialize HenHen in the current directory, you can use:
+
+```bash
+henhen init "your project name"
+```
+
+This will create a `henhen.yaml` file populated with basic fields. This is the **configuration file** for your project, where you can...
+
+- ... list dependencies to be installed.
+- ... define custom URLs to fetch certain dependencies from.
+- ... define **targets** to build. A **target** can be an **egg** or a static binary **executable**.
+
+A simple config file to build a simple egg should look like this:
+
+```yaml
+name: simple
+source-files:
+- '*.scm'
+- '*.egg'
+dependencies:
+- srfi-1
+targets:
+  simple:
+    type: egg
+    directory: '.'
+```
+
+We can do a lot more, however. As a more complex example, let's build a local egg `foo`, a local egg `bar` that depends on `foo`, and a static executable that uses both `foo` and `bar`. That's simple with HenHen!
+
+With a folder structure like this:
+
+```tree
+.
+├── bar
+│   ├── bar.egg
+│   └── bar.scm
+├── foo
+│   ├── foo.egg
+│   └── foo.scm
+├── foobar.scm
+└── henhen.yaml
+```
+
+Let's write our `henhen.yaml` config file to build our project:
+
+```yaml
+name: foobar
+source-files:
+- 'foo/**'
+- 'bar/**'
+- 'foobar.scm'
+dependencies:
+- srfi-1
+- srfi-13
+- srfi-5
+targets:
+  foo:
+    type: egg
+    directory: './foo'
+  bar:
+    type: egg
+    directory: './bar'
+    dependencies:
+    - foo
+  foobar:
+    type: executable
+    source: './foobar.scm'
+    dependencies:
+    - foo
+    - bar
+```
 
 [1]: http://wiki.call-cc.org/releasing-your-egg#publishing-your-egg
 [2]: http://wiki.call-cc.org/man/5/Extension%20tools#security
