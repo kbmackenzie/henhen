@@ -31,6 +31,6 @@ compiler: chicken-csc
 interpreter: chicken-csi
 ```
 
-[1]: http://wiki.call-cc.org/man/5/Using%20the%20interpreter
+[1]: http://wiki.call-cc.org/man/5/Using%20the%20compiler
 [2]: https://yaml.org/
 [3]: https://archlinux.org/packages/extra/x86_64/chicken/
