@@ -2,7 +2,7 @@ HenHen is a build tool for CHICKEN Scheme, designed to work alongside `chicken-i
 
 - Install dependencies in an **isolated virtual environment**. No more system-wide installs!
 - Manage multiple local eggs seamlessly, and build them together.
-- Fetch and install dependencies from **anywhere** by specifying a [git][3] repository URL for each one. No need to rely entirely on the [official egg index][1]!
+- Fetch and install dependencies from **anywhere** by specifying a [git][3] repository URL for any dependency that isn't in the [official egg index][1]!
 
 It creates an isolated egg repository for each project inside a `.henhen` folder.
 
