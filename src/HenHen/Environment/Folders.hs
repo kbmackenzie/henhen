@@ -21,4 +21,4 @@ localChickenRepo :: FilePath
 localChickenRepo = localChicken </> "lib"
 
 localDependencies :: FilePath
-localDependencies = localChicken </> "_dependencies"
+localDependencies = localChicken </> "_fetch"
