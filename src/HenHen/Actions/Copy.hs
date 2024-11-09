@@ -8,7 +8,7 @@ import HenHen.Config
     , TargetKey(..)
     )
 import HenHen.Logger (logMessage)
-import HenHen.Environment (localChickenBin)
+import HenHen.Environment (localBuild)
 import HenHen.Packager (Packager, throwError)
 import HenHen.Utils.FilePath (toExecutablePath)
 import HenHen.Utils.IO (copyFileSafe)
@@ -21,7 +21,7 @@ copy config name destination = do
         failMessage message = concat ["Can't copy target ", show name, ": ", message]
 
     binary <- case HashMap.lookup (TargetKey name) (configTargets config) of
-            (Just (Executable _ _)) -> return (localChickenBin </> toExecutablePath name)
+            (Just (Executable _ _)) -> return (localBuild </> toExecutablePath name)
             (Just (Egg        _ _)) -> throwError (failMessage "target isn't an executable")
             Nothing                 -> throwError (failMessage "no target matches that name")
     let output = destination </> toExecutablePath name
