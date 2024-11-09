@@ -3,7 +3,7 @@ module HenHen.Actions.Run
 ) where
 
 import HenHen.Packager (Packager, throwError)
-import HenHen.Config (HenHenConfig(..))
+import HenHen.Config (HenHenConfig(..), LogLevel(..))
 import HenHen.Environment
     ( Environment
     , localChickenBin
@@ -53,4 +53,5 @@ run config env name args = do
             runScript env name line
         Nothing     -> do
             logMessage (configLogLevel config) ("Running binary " ++ show name)
-            runEnvironmentTask config env =<< runBinary name args
+            let runConfig = config { configLogLevel = Just Verbose }
+            runEnvironmentTask runConfig env =<< runBinary name args
