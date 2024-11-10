@@ -6,6 +6,7 @@ cabal-version: 2.2
 
 name:           henhen
 version:        1.0.0
+description:    Isolated virtual environments for CHICKEN Scheme.
 homepage:       https://github.com/kbmackenzie/henhen#readme
 bug-reports:    https://github.com/kbmackenzie/henhen/issues
 author:         kbmackenzie <kelly.a.betty@gmail.com>

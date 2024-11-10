@@ -4,7 +4,7 @@ author:       kbmackenzie <kelly.a.betty@gmail.com>
 github:       kbmackenzie/henhen
 license:      GPL-3.0-only
 copyright:    2024 kbmackenzie
-description:  ''
+description:  'Isolated virtual environments for CHICKEN Scheme.'
 
 extra-source-files:
 - README.md
