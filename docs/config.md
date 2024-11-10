@@ -16,15 +16,15 @@
 
 ## Configuration File
 
-The top-level fields you can define in your `henhen.yaml` config file are:
+The top-level fields you can define in your `henhen.yaml` configuration file are:
 
 ### `name`
 
-The name of your project. This field is **optional**: the name is used in log messages and error messages, but does not currently have much value otherwise.
+The name of your project. This field is **optional**: the name is only used in log messages and error messages and does not currently have much value otherwise.
 
 ### `source-files`
 
-A list of patterns for globbing source files, such as:
+A list of patterns for matching source files. They work similarly to [POSIX glob patterns][2]:
 
 - `*.scm`    - All `.scm` files in the current directory.
 - `src/**`   - All files inside the `src` directory.
@@ -50,7 +50,7 @@ When this field isn't specified, HenHen uses the current directory as the source
 
 ### `data-files`
 
-A list of patterns for globbing data files: static assets that are relevant to your project.
+A list of patterns for mataching data files: static assets that are relevant to your project.
 
 It works exactly like `source-files`, but is **not affected** by `source-root`. Thus, you can safely define a source root and still easily glob static files from the current directory without indirections.
 
@@ -59,7 +59,7 @@ It works exactly like `source-files`, but is **not affected** by `source-root`. 
 A list of dependencies for your project. A dependency can be: 
 
 - An egg available in the official egg index and installable through `chicken-install <name>`.
-- An egg with a source URL defined in the `fetch` field of your config file.
+- An egg with a source URL defined in the `fetch` field of your configuration file.
 
 When you build your project, all dependencies will be installed locally in the `.henhen` directory.
 
@@ -78,16 +78,18 @@ dependencies:
 
 ### `fetch`
 
-A map associating custom dependency keys with their respective source URLs. All custom dependency URLs should point to Git repositories.
+A map associating custom dependencies with their respective [git][3] repository URLs.
 
 Any URL that can be cloned with `git clone <url>` can be used!
+
 ```yaml
 fetch:
   foo: '<url here>'
   bar: '<url here>'
   baz: '<url here>'
 ```
-Any dependencies defined in that map can then be listed as a dependency either on the top level `dependencies` field or in an individual target. All dependencies are installed when you build your project.
+
+Any keys defined in that map can then be listed as a dependency either on the top level `dependencies` field or in an individual target. All dependencies are installed when you build your project.
 
 ### `scripts`
 
@@ -165,7 +167,7 @@ Static binary executable targets can be defined with `type: executable`, and acc
 | `dependencies`  | The source file's dependencies. (See [this section](#dependencies)!) |
 | `extra-options` | Extra options to be passed to `csc` when compiling the executable.   |
 
-When an executable target is built, it's locally installed in the `.henhen` directory, and it can be run with `henhen run <name>`. The generated file can be copied to a specified directory with `henhen copy`.
+When an executable target is built, it's locally installed in the `.henhen` directory, and you can run it with the command `henhen run <name>`. Additionally, the generated binary can be copied to anywhere with `henhen copy`.
 
 ```yaml
 targets:
@@ -175,3 +177,6 @@ targets:
     dependencies:
     - my-egg
 ```
+
+[1]: https://git-scm.com/
+[2]: https://man7.org/linux/man-pages/man7/glob.7.html
