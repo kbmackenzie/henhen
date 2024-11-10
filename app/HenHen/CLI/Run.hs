@@ -8,6 +8,7 @@ import HenHen (henhen)
 import HenHen.Config (LogLevel(..))
 import HenHen.CLI.Options (HenHenCommand(..), getCommand)
 import System.IO (hPutStrLn, stderr)
+import System.Exit (exitWith, ExitCode(..))
 
 run :: IO ()
 run = do
@@ -15,7 +16,9 @@ run = do
     let action    = commandAction command
     let verbosity = getVerbosity  command
     henhen action verbosity >>= \case
-        (Left e)  -> hPutStrLn stderr ("[henhen] " ++ e)
+        (Left e)  -> do
+            hPutStrLn stderr ("[henhen] " ++ e)
+            exitWith (ExitFailure 1)
         (Right _) -> return ()
 
 getVerbosity :: HenHenCommand -> Maybe LogLevel
