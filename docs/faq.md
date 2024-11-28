@@ -6,6 +6,12 @@
 
 ---
 
+**Q:** *"I can't build my egg with HenHen! What do I do?"*
+
+**A:** Make sure the glob patterns in the `source-files` field also match `.egg` files!! HenHen needs to know where your egg file is in order to build your egg.
+
+---
+
 **Q:** *"Some CHICKEN tools are installed under different names on my system! How do I tell HenHen what name to use when invoking them?"*
 
 **A:** You can define **global aliases** for each tool. [See the global alias documentation.](./aliases.md)
