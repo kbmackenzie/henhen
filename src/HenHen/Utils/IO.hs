@@ -2,6 +2,7 @@ module HenHen.Utils.IO
 ( readFileSafe
 , getFileModTime
 , writeFileSafe
+, appendFileSafe
 , EntryType(..)
 , exists
 , whenFileExists
@@ -62,6 +63,13 @@ writeFileSafe path content = (liftIO >=> liftEither) $ do
     let writer = (fmap Right .) . ByteString.writeFile
     writer path content `catch` \err -> do
         let message = fileError "couldn't write file" path err
+        return $ Left message
+
+appendFileSafe :: FilePath -> ByteString -> Packager ()
+appendFileSafe path content = (liftIO >=> liftEither) $ do
+    let append = (fmap Right .) . ByteString.appendFile
+    append path content `catch` \err -> do
+        let message = fileError "couldn't append to file" path err
         return $ Left message
 
 data EntryType = Any | File | Directory
