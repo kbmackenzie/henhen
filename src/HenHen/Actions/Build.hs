@@ -93,9 +93,10 @@ build config (key, target) = case target of
 buildAll :: HenHenConfig -> Environment -> Packager ()
 buildAll config env = do
     let targetMap = configTargets config
-
     let project = fromMaybe "unnamed" (configName config)
-    logMessage (configLogLevel config) ("Building project " ++ show project)
+
+    logMessage (configLogLevel config) $
+        "Building project " ++ show project
 
     let getDependencies :: Target -> [(TargetKey, Target)]
         getDependencies target = do
@@ -114,8 +115,9 @@ buildAll config env = do
                 let visitedSelf = HashSet.insert self visited
                 visitedDependencies <- foldM deepBuild visitedSelf (getDependencies target)
 
-                logMessage (configLogLevel config) ("Building " ++ getKey self)
+                logMessage (configLogLevel config) $
+                    "Building " ++ getKey self
+
                 runEnvironmentTask config env =<< build config (self, target)
                 return visitedDependencies
-
     foldM_ deepBuild mempty ((HashMap.toList . configTargets) config)
