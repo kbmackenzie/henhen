@@ -5,24 +5,17 @@ module HenHen.CLI.Run
 ) where
 
 import HenHen (henhen)
-import HenHen.Config (LogLevel(..))
-import HenHen.CLI.Options (HenHenCommand(..), getCommand)
+import HenHen.CLI.Options (HenHenOptions(..), getOptions)
 import System.IO (hPutStrLn, stderr)
 import System.Exit (exitWith, ExitCode(..))
 
 run :: IO ()
 run = do
-    command <- getCommand
-    let action    = commandAction command
-    let verbosity = getVerbosity  command
-    henhen action verbosity >>= \case
+    command <- getOptions
+    let action   = getAction command
+    let logLevel = getLogLevel command
+    henhen action logLevel >>= \case
         (Left e)  -> do
             hPutStrLn stderr ("[henhen] " ++ e)
             exitWith (ExitFailure 1)
         (Right _) -> return ()
-
-getVerbosity :: HenHenCommand -> Maybe LogLevel
-getVerbosity command = case (commandQuiet command, commandVerbose command) of
-    (True, _   ) -> Just Quiet
-    (_   , True) -> Just Verbose
-    _            -> Nothing
