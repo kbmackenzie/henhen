@@ -23,31 +23,33 @@ import HenHen.Environment
     , EnvironmentTask(..)
     , runEnvironmentTask
     )
+import HenHen.Packager (Packager, throwError)
 import HenHen.Logger (logMessage)
 import HenHen.Utils.FilePath (toExecutablePath)
-import HenHen.Utils.IO (createFileLinkSafe)
+import HenHen.Utils.IO (createFileLinkSafe, globFiles, exists, EntryType(File))
 import System.FilePath ((</>), addExtension)
 import Data.Maybe (fromMaybe, mapMaybe)
-import HenHen.Packager (Packager)
 import Data.HashSet (HashSet)
 import qualified Data.HashSet as HashSet
 import qualified Data.HashMap.Strict as HashMap
-import Control.Monad (foldM, foldM_)
+import Control.Monad (foldM, foldM_, when, unless)
 
-type GenerateTask a = HenHenConfig -> TargetKey -> TargetMeta -> a -> EnvironmentTask
+type BuildTask a = HenHenConfig -> TargetKey -> TargetMeta -> a -> Packager EnvironmentTask
 
-buildBinary :: GenerateTask SourceOptions
+buildBinary :: BuildTask SourceOptions
 buildBinary config key meta options = do
     let name   = getKey key
     let source = fromMaybe (addExtension name "scm") (sourcePath options)
-    let binary = toExecutablePath name
+    hasSource <- exists File source
+    unless hasSource $
+        throwError ("source file doesn't exist: " ++ show source)
 
+    let binary = toExecutablePath name
     let coreFlags = ["-static", "-setup-mode", "-O2"]
     let arguments = concat
             [ ["-o", binary, source]
             , coreFlags
             , metaOptions meta ] 
-
     let after :: Packager ()
         after = do
             -- Create symlink in '<local-chicken>/bin'!
@@ -56,19 +58,23 @@ buildBinary config key meta options = do
             createFileLinkSafe True from to
 
     let compiler = getCompiler config
-    EnvironmentTask
+    return EnvironmentTask
         { taskCommand     = compiler
         , taskArguments   = arguments
         , taskDirectory   = Just localBuild
-        , taskErrorReport = Just . buildFail $ "module " ++ show name
+        , taskErrorReport = Just . buildFail $ "executable " ++ show name
         , afterTask       = Just after }
 
-buildEgg :: GenerateTask EggOptions
+buildEgg :: BuildTask EggOptions
 buildEgg config key meta options = do
-    let name      = getKey key
     let directory = maybe localBuild (localBuild </>) (eggDirectory options)
+    noEgg <- null <$> globFiles directory ["*.egg"]
+    when noEgg $
+        throwError ("no .egg file found in directory: " ++ show directory)
+
+    let name      = getKey key
     let installer = getInstaller config
-    EnvironmentTask
+    return EnvironmentTask
         { taskCommand     = installer
         , taskArguments   = metaOptions meta
         , taskDirectory   = Just directory
@@ -79,7 +85,7 @@ buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
-build :: HenHenConfig -> (TargetKey, Target) -> EnvironmentTask
+build :: HenHenConfig -> (TargetKey, Target) -> Packager EnvironmentTask
 build config (key, target) = case target of
     (Egg meta options)        -> buildEgg config key meta options
     (Executable meta options) -> buildBinary config key meta options
@@ -109,7 +115,7 @@ buildAll config env = do
                 visitedDependencies <- foldM deepBuild visitedSelf (getDependencies target)
 
                 logMessage (configLogLevel config) ("Building " ++ getKey self)
-                runEnvironmentTask config env $ build config (self, target)
+                runEnvironmentTask config env =<< build config (self, target)
                 return visitedDependencies
 
     foldM_ deepBuild mempty ((HashMap.toList . configTargets) config)
