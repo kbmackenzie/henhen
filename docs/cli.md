@@ -15,9 +15,11 @@ HenHen has a nice, simple command-line interface for building and managing proje
 ```
 henhen - a build tool for CHICKEN Scheme
 
-Usage: henhen COMMAND
+Usage: henhen COMMAND [(-v|--verbose) | (-q|--quiet)]
 
 Available options:
+  -v,--verbose             Enable verbose mode
+  -q,--quiet               Silence log messages
   -h,--help                Show this help text
 
 Available commands:
@@ -37,13 +39,11 @@ Available commands:
 Build the project in the current directory.
 
 ```
-Usage: henhen build [-q|--quiet] [-v|--verbose]
+Usage: henhen build 
 
   Build project
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -56,13 +56,11 @@ Run something inside the virtual environment. That 'something' can be...
 - ... a script defined in the [`scripts` field of your configuration file.](./config.md#scripts)
 
 ```
-Usage: henhen run NAME [ARGS] [-q|--quiet] [-v|--verbose]
+Usage: henhen run NAME [ARGS]
 
   Run a target or config script in virtual environment
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -73,13 +71,11 @@ Initialize a Henhen project in the current directory.
 This creates a `henhen.yaml` file and a `.gitignore` file.
 
 ```
-Usage: henhen init [NAME] [-q|--quiet] [-v|--verbose]
+Usage: henhen init [NAME]
 
   Initialize project
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -96,13 +92,11 @@ When the second argument is provided, the repository URL is added to the `fetch`
 You can also specify the **version** of an egg by using a colon (`:`) after the egg's name (in the same way you would do with `chicken-install`).
 
 ```
-Usage: henhen install NAME [SOURCE] [-q|--quiet] [-v|--verbose]
+Usage: henhen install NAME [SOURCE]
 
   Install dependency
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -115,14 +109,12 @@ This command **does not invoke `chicken-uninstall`**, contrary to what you might
 **Note:** This command does not affect build targets' `dependencies` field.
 
 ```
-Usage: henhen uninstall NAME [-f|--fetch] [-q|--quiet] [-v|--verbose]
+Usage: henhen uninstall NAME [-f|--fetch]
 
   Remove dependency
 
 Available options:
   -f,--fetch               Remove key from fetch map
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -131,13 +123,11 @@ Available options:
 Interpret a CHICKEN Scheme script in the virtual environment.
 
 ```
-Usage: henhen interpret PATH [-q|--quiet] [-v|--verbose]
+Usage: henhen interpret PATH
 
   Interpret a Scheme script in virtual environment
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -146,13 +136,11 @@ Available options:
 Run the CHICKEN REPL in the virtual environment.
 
 ```
-Usage: henhen repl [-q|--quiet] [-v|--verbose]
+Usage: henhen repl 
 
   Run the CHICKEN REPL in virtual environment
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -168,13 +156,11 @@ This utility command copies a generated binary from `.henhen/_build` to a specif
 When no second argument is given, this command simply copies the binary to the project's root directory.
 
 ```
-Usage: henhen copy NAME [DESTINATION] [-q|--quiet] [-v|--verbose]
+Usage: henhen copy NAME [DESTINATION]
 
   Copy executable target
 
 Available options:
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
@@ -185,14 +171,12 @@ Clean the build cache. Next time you build the project, all build targets will b
 When the `--purge` option is given, this command becomes much more aggressive: it removes the `.henhen` directory entirely, erasing the virtual environment. When you want to start fresh (i.e. re-install all dependencies, re-build everything), this is the option you want to use.
 
 ```
-Usage: henhen clean [-p|--purge] [-q|--quiet] [-v|--verbose]
+Usage: henhen clean [-p|--purge]
 
   Clean project directory
 
 Available options:
   -p,--purge               Purge virtual environment entirely
-  -q,--quiet               Silence log messages
-  -v,--verbose             Enable verbose mode
   -h,--help                Show this help text
 ```
 
