@@ -8,9 +8,7 @@ HenHen is a build tool for CHICKEN Scheme, designed to work alongside `chicken-i
 
 It creates an isolated egg repository for each project inside a `.henhen` folder.
 
-With HenHen, you can manage dependencies more easily and reliably, and you can experiment with eggs all you want without ever polluting your global CHICKEN installation!
-
-And if anything goes wrong along the way, all you need to do to start fresh with a clean slate is run `henhen clean --purge`!
+With virtual environments, you can manage your dependencies across projects more easily and experiment with eggs without polluting your global CHICKEN installation. If anything ever goes wrong along the way, all you need to do to start fresh with a clean slate is run `henhen clean --purge`.
 
 ## Table of Contents
 
@@ -26,7 +24,7 @@ HenHen is designed for convenience. I wrote this to get around some of the behav
 - By default, `chicken-install` installs every egg **globally**, system-wide.
 - Because of the *default location of the egg repository*, `chicken-install` requires superuser privilleges to install eggs (see [this section][2]). To change the repository location, you must either *build CHICKEN from source* or *set specific environment variables*.
 
-HenHen is designed to circumvent **both of these issues** with as little hassle as possible, creating a virtual environment for each project.
+HenHen is designed to circumvent **both of these issues** with as little hassle as possible.
 
 ## Installation
 
