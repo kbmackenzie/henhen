@@ -2,7 +2,6 @@
 
 module HenHen.Actions.Build
 ( build
-, buildAll
 ) where
 
 import HenHen.Config
@@ -85,13 +84,13 @@ buildFail :: String -> String -> String
 buildFail name message = concat
     [ "Couldn't build ", name, ": ", message ]
 
-build :: HenHenConfig -> (TargetKey, Target) -> Packager EnvironmentTask
-build config (key, target) = case target of
+buildTask :: HenHenConfig -> (TargetKey, Target) -> Packager EnvironmentTask
+buildTask config (key, target) = case target of
     (Egg meta options)        -> buildEgg config key meta options
     (Executable meta options) -> buildBinary config key meta options
 
-buildAll :: HenHenConfig -> Environment -> Packager ()
-buildAll config env = do
+build :: HenHenConfig -> Environment -> Packager ()
+build config env = do
     let targetMap = configTargets config
     let project = fromMaybe "unnamed" (configName config)
 
@@ -118,6 +117,6 @@ buildAll config env = do
                 logMessage (configLogLevel config) $
                     "Building " ++ getKey self
 
-                runEnvironmentTask config env =<< build config (self, target)
+                runEnvironmentTask config env =<< buildTask config (self, target)
                 return visitedDependencies
     foldM_ deepBuild mempty ((HashMap.toList . configTargets) config)

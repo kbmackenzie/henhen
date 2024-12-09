@@ -8,7 +8,7 @@ import HenHen.Config (HenHenConfig(..), getConfig, hasProjectConfig)
 import HenHen.Logger (LogLevel(..))
 import HenHen.Packager (Packager, throwError)
 import HenHen.Environment (createEnvironment)
-import HenHen.Actions.Build (buildAll)
+import HenHen.Actions.Build (build)
 import HenHen.Actions.Run (run)
 import HenHen.Actions.Prepare (prepare, collectDependencies)
 import HenHen.Actions.Clean (clean, purge)
@@ -42,7 +42,7 @@ runAction action verbosity = do
     config <- setVerbosity verbosity <$> getConfig
     env    <- createEnvironment config
     prepare config env
-    buildAll config env
+    build config env
     case action of
         Build              -> return ()
         (Run name args)    -> run config env name args
