@@ -27,6 +27,6 @@ copy config name destination = do
     let output = destination </> toExecutablePath name
 
     logMessage (configLogLevel config) . concat $
-        ["Copying binary ", show binary, " to ", show destination]
+        ["Copying ", show binary, " to ", show destination]
 
     copyFileSafe binary output
