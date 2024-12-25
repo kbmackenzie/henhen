@@ -130,9 +130,11 @@ We want to distribute that binary executable, so let's copy it to our project ro
 henhen copy foobar
 ```
 
-And we can share it! 🐔
+And we can share it!
 
-To learn more, [read the documentation](./docs/introduction.md)!
+<p align="center">
+  <img width="512" src="https://media1.tenor.com/m/TIxhU9MkeCQAAAAC/dancing-chicken-dansende-kip.gif" alt="Dancing chicken" />
+</p>
 
 [1]: http://wiki.call-cc.org/releasing-your-egg#publishing-your-egg
 [2]: http://wiki.call-cc.org/man/5/Extension%20tools#security
