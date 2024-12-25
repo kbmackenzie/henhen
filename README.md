@@ -8,8 +8,6 @@ HenHen is a build tool for CHICKEN Scheme, designed to work alongside `chicken-i
 
 It creates an isolated egg repository for each project inside a `.henhen` folder.
 
-With virtual environments, you can manage your dependencies across projects more easily and experiment with eggs without polluting your global CHICKEN installation. If anything ever goes wrong along the way, all you need to do to start fresh with a clean slate is run `henhen clean --purge`.
-
 ## Table of Contents
 
 1. [Philosophy](#philosophy)
